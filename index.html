@@ -127,8 +127,9 @@
       transition: transform 0.3s ease; /* Animación suave */
     }
 
-    .radio-container:hover {
-      transform: translateY(0); /* Mostrar el widget al pasar el mouse */
+    /* Mostrar el widget al pasar el mouse */
+    .radio-trigger:hover + .radio-container {
+      transform: translateY(0); /* Mover el widget hacia arriba */
     }
 
     .radio-container iframe {
@@ -136,6 +137,29 @@
       height: 100%;
       border: none;
       pointer-events: auto; /* Habilitar interacciones */
+    }
+
+    /* Botón/indicador para activar el widget */
+    .radio-trigger {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 10px;
+      background-color: red; /* Color llamativo para el indicador */
+      border-radius: 5px 5px 0 0; /* Bordes redondeados */
+      cursor: pointer;
+      z-index: 1001; /* Encima del widget */
+      text-align: center;
+      line-height: 10px;
+      font-size: 10px;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .radio-trigger:hover {
+      background-color: orange; /* Cambiar color al pasar el mouse */
     }
   </style>
 </head>
@@ -198,6 +222,9 @@
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="3" disabled>
     </div>
   </div>
+
+  <!-- Indicador para activar el widget -->
+  <div class="radio-trigger">📻</div>
 
   <!-- Reproductor de radio -->
   <div class="radio-container">
