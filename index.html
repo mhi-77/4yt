@@ -142,7 +142,7 @@
       transform: translateX(-50%);
       width: 80px; /* Ancho aumentado */
       height: 30px; /* Altura aumentada */
-      background-color: red; /* Color llamativo para el indicador */
+      background-color: orange; /* Color predeterminado naranja */
       border-radius: 15px 15px 0 0; /* Bordes redondeados */
       cursor: pointer;
       z-index: 1001; /* Encima del widget */
@@ -154,11 +154,11 @@
     }
 
     .radio-trigger:hover {
-      background-color: orange; /* Cambiar color al pasar el mouse */
+      background-color: red; /* Cambiar color a rojo al pasar el mouse */
     }
 
-    /* Mostrar el widget al pasar el mouse sobre el indicador */
-    .radio-trigger:hover + .radio-container {
+    /* Mostrar el widget al hacer clic en el indicador */
+    .radio-container.visible {
       transform: translateY(0); /* Mover el widget hacia arriba */
     }
   </style>
@@ -349,6 +349,22 @@
     tag.src = " https://www.youtube.com/iframe_api ";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // Comportamiento del widget de radio
+    const radioTrigger = document.querySelector('.radio-trigger');
+    const radioContainer = document.querySelector('.radio-container');
+
+    // Alternar la visibilidad del widget al hacer clic en el indicador
+    radioTrigger.addEventListener('click', () => {
+      radioContainer.classList.toggle('visible');
+    });
+
+    // Ocultar el widget al hacer clic fuera de él
+    document.addEventListener('click', (event) => {
+      if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
+        radioContainer.classList.remove('visible');
+      }
+    });
   </script>
 </body>
 </html>
