@@ -18,7 +18,7 @@
       grid-template-columns: repeat(2, 1fr); /* Dos columnas */
       grid-template-rows: repeat(2, 1fr); /* Dos filas */
       gap: 2px; /* Espacio entre los cuadrantes */
-      height: 100vh; /* Altura total de la pantalla */
+      height: calc(100vh - 165px); /* Ajustar altura para dejar espacio al reproductor */
       background-color: black; /* Fondo negro para la cuadrícula */
     }
 
@@ -74,7 +74,6 @@
     }
 
     /* Cambiar el color del slider */
-
     .volume-slider {
       width: 80px; /* Ancho del slider */
       height: 4px; /* Altura igual al contenedor */
@@ -84,21 +83,13 @@
       direction: rtl; /* Invertir la dirección para que el valor máximo esté arriba */
       transform: rotate(90deg); /* Rotar el slider para que funcione correctamente */
       margin: 0 1px; /* Espacio entre el video y el slider */
-	  opacity: 0; /* Inicialmente invisible */
+      opacity: 0; /* Inicialmente invisible */
       transition: opacity 0.3s ease; /* Animación suave */
     }
 
-  .volume-slider.visible {
+    .volume-slider.visible {
       opacity: 1; /* Hacer visible el slider */
     }
-
-    /* Estilo del track en navegadores basados en WebKit (Chrome, Edge, Safari) 
-    .volume-slider::-webkit-slider-runnable-track {
-      width: 100%;
-      height: 7px;
-      background: #4CAF50; /* Color del track */
-      border-radius: 5px;
-    }*/
 
     /* Estilo del thumb en navegadores basados en WebKit */
     .volume-slider::-webkit-slider-thumb {
@@ -111,14 +102,6 @@
       cursor: pointer;
     }
 
-    /* Estilo del track en Firefox */
-     .volume-slider::-moz-range-track {
-      width: 100%;
-      height: 15px;
-      background: #4CAF50; /* Color del track */
-      border-radius: 5px;
-    }
-
     /* Estilo del thumb en Firefox */
     .volume-slider::-moz-range-thumb {
       width: 15px;
@@ -126,6 +109,24 @@
       background: red; /* Color del pulgar o thumb para Firefox */
       border-radius: 50%;
       cursor: pointer;
+    }
+
+    /* Contenedor del reproductor de radio */
+    .radio-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 165px;
+      background-color: #f4f4f4; /* Color de fondo para el reproductor */
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Sombra para separar del contenido */
+      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
+    }
+
+    .radio-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
@@ -145,13 +146,12 @@
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="0" disabled>
     </div>
-
     <!-- Video 2 -->
     <div class="video-wrapper">
       <div class="video-container" data-video-id="cb12KmMMDJA">
         <iframe 
           id="video2" 
-          src="https://www.youtube.com/embed/cb12KmMMDJA?autoplay=1&mute=1&controls=0&loop=1&playlist=cb12KmMMDJA&enablejsapi=1" 
+          src=" https://www.youtube.com/embed/cb12KmMMDJA?autoplay=1&mute=1&controls=0&loop=1&playlist=cb12KmMMDJA&enablejsapi=1" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -160,13 +160,12 @@
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="1" disabled>
     </div>
-
     <!-- Video 3 -->
     <div class="video-wrapper">
       <div class="video-container" data-video-id="FhegnQMhMlE">
         <iframe 
           id="video3" 
-          src="https://www.youtube.com/embed/FhegnQMhMlE?autoplay=1&mute=1&controls=0&loop=1&playlist=FhegnQMhMlE&enablejsapi=1" 
+          src=" https://www.youtube.com/embed/FhegnQMhMlE?autoplay=1&mute=1&controls=0&loop=1&playlist=FhegnQMhMlE&enablejsapi=1" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -175,13 +174,12 @@
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="2" disabled>
     </div>
-
     <!-- Video 4 -->
     <div class="video-wrapper">
       <div class="video-container" data-video-id="avly0uwZzOE">
         <iframe 
           id="video4" 
-          src="https://www.youtube.com/embed/avly0uwZzOE?autoplay=1&mute=1&controls=0&loop=1&playlist=avly0uwZzOE&enablejsapi=1" 
+          src=" https://www.youtube.com/embed/avly0uwZzOE?autoplay=1&mute=1&controls=0&loop=1&playlist=avly0uwZzOE&enablejsapi=1" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -190,6 +188,20 @@
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="3" disabled>
     </div>
+  </div>
+
+  <!-- Reproductor de radio -->
+  <div class="radio-container">
+    <iframe 
+      src=" https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=light&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
+      border="0" 
+      scrolling="no" 
+      frameborder="0" 
+      allow="autoplay; clipboard-write" 
+      allowtransparency="true" 
+      style="background-color: unset;width: 100%;" 
+      height="165">
+    </iframe>
   </div>
 
   <script>
@@ -213,7 +225,6 @@
     function onPlayerReady(event) {
       const player = event.target;
       console.log('Video listo:', player.getIframe().id);
-
       // Silenciar todos los videos al inicio
       player.mute();
       player.playVideo();
@@ -223,17 +234,16 @@
     containers.forEach((container, index) => {
       const overlay = container.querySelector('.overlay');
       const videoId = container.dataset.videoId;
-	  const slider = volumeSliders[index];
+      const slider = volumeSliders[index];
 
       // Evento de clic simple
       overlay.addEventListener('click', () => {
         const currentPlayer = players[index];
-
         // Si el contenedor ya está activo, mutear el video
         if (container.classList.contains('active')) {
           currentPlayer.mute();
           container.classList.remove('active');
-		  slider.classList.remove('visible'); // Ocultar el slider
+          slider.classList.remove('visible'); // Ocultar el slider
           slider.disabled = true; // Deshabilitar el slider
           console.log('Video mutado:', videoId);
         } else {
@@ -241,24 +251,20 @@
           containers.forEach((cont) => {
             cont.classList.remove('active');
           });
-
-		  // Ocultar y deshabilitar todos los sliders
+          // Ocultar y deshabilitar todos los sliders
           volumeSliders.forEach((s) => {
             s.classList.remove('visible');
             s.disabled = true;
           });
-
           // Silenciar todos los videos
           players.forEach((player) => {
             if (player && player.mute) player.mute();
           });
-
           // Quitar el mute al video seleccionado
           if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
-
           // Agregar la clase 'active' al contenedor seleccionado
           container.classList.add('active');
-		  slider.classList.add('visible'); // Mostrar el slider
+          slider.classList.add('visible'); // Mostrar el slider
           slider.disabled = false; // Habilitar el slider
           console.log('Video activado:', videoId);
         }
@@ -267,25 +273,21 @@
       // Evento de doble clic
       overlay.addEventListener('dblclick', () => {
         const currentPlayer = players[index];
-
         // Mutear el video si está activo
         if (container.classList.contains('active')) {
           currentPlayer.mute();
           container.classList.remove('active');
-		  slider.classList.remove('visible'); // Ocultar el slider
+          slider.classList.remove('visible'); // Ocultar el slider
           slider.disabled = true; // Deshabilitar el slider
           console.log('Video mutado por doble clic:', videoId);
         }
-
         // Construir la URL del video con parámetros para pantalla completa
-        const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
-
+        const videoUrl = ` https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
         // Abrir el enlace del video en una ventana emergente
         const popupWidth = 800; // Ancho de la ventana emergente
         const popupHeight = 600; // Alto de la ventana emergente
         const left = (window.screen.width - popupWidth) / 2; // Centrado horizontal
         const top = (window.screen.height - popupHeight) / 2; // Centrado vertical
-
         window.open(
           videoUrl,
           'VideoPopup',
@@ -298,11 +300,9 @@
     // Agregar eventos a los controles de volumen
     volumeSliders.forEach((slider) => {
       const videoIndex = slider.dataset.videoIndex;
-
       slider.addEventListener('input', () => {
         const volume = slider.value / 100; // Convertir el valor del slider a un rango de 0 a 1
         const player = players[videoIndex];
-
         if (player && player.setVolume) {
           player.setVolume(volume * 100); // Establecer el volumen del video
           console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
@@ -312,7 +312,7 @@
 
     // Cargar la API de YouTube
     const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
+    tag.src = " https://www.youtube.com/iframe_api ";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   </script>
