@@ -19,7 +19,7 @@
       grid-template-columns: repeat(2, 1fr); /* Dos columnas */
       grid-template-rows: repeat(2, 1fr); /* Dos filas */
       gap: 2px; /* Espacio entre los cuadrantes */
-      height: calc(100vh - 165px); /* Altura reducida para dejar espacio al reproductor y configuraciones */
+      height: calc(100vh - 100px); /* Altura reducida para dejar espacio al reproductor y configuraciones */
       background-color: black; /* Fondo negro para la cuadrícula */
     }
 
@@ -162,15 +162,15 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 50px;
-      height: 30px;
+      width: 40px; /* Tamaño reducido */
+      height: 25px; /* Tamaño reducido */
       background: rgba(0, 0, 255, 0.8); /* Azul con 80% de opacidad */
       border-radius: 15px;
       cursor: pointer;
       z-index: 1001;
       text-align: center;
-      line-height: 30px;
-      font-size: 20px;
+      line-height: 25px; /* Alinear texto verticalmente */
+      font-size: 18px; /* Texto más pequeño */
       color: white;
       transition: background-color 0.3s ease;
     }
