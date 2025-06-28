@@ -12,7 +12,6 @@
       height: 100%;
       overflow: hidden;
     }
-
     .container {
       display: grid;
       grid-template-columns: repeat(2, 1fr); /* Dos columnas */
@@ -21,7 +20,6 @@
       height: 100vh; /* Altura total de la pantalla */
       background-color: black; /* Fondo negro para la cuadrícula */
     }
-
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -29,16 +27,13 @@
       display: flex; /* Contenedor flexible para alinear el video y el slider */
       align-items: center; /* Centrar verticalmente */
     }
-
     /* Ajuste de posición para los sliders */
     .video-wrapper:nth-child(odd) {
       flex-direction: row-reverse; /* Sliders a la izquierda para videos 1 y 3 */
     }
-
     .video-wrapper:nth-child(even) {
       flex-direction: row; /* Sliders a la derecha para videos 2 y 4 */
     }
-
     .video-container {
       position: relative;
       width: calc(100% - 20px); /* Dejar espacio para el slider */
@@ -48,11 +43,9 @@
       box-sizing: border-box; /* Incluir el borde en el cálculo del tamaño */
       transition: all 0.3s ease; /* Animación suave para cambios visuales */
     }
-
     .video-container.active {
       border: 7px solid red; /* Borde rojo más grueso para el video activo */
     }
-
     iframe {
       position: absolute;
       top: 50%;
@@ -62,7 +55,6 @@
       height: 100%;
       pointer-events: none; /* Desactivar interacciones directas con el iframe */
     }
-
     .overlay {
       position: absolute;
       top: 0;
@@ -72,7 +64,6 @@
       cursor: pointer; /* Indica que es interactivo */
       background: rgba(0, 0, 0, 0); /* Capa transparente */
     }
-
     /* Cambiar el color del slider */
     .volume-slider {
       width: 80px; /* Ancho del slider */
@@ -86,11 +77,9 @@
       opacity: 0; /* Inicialmente invisible */
       transition: opacity 0.3s ease; /* Animación suave */
     }
-
     .volume-slider.visible {
       opacity: 1; /* Hacer visible el slider */
     }
-
     /* Estilo del thumb en navegadores basados en WebKit */
     .volume-slider::-webkit-slider-thumb {
       -webkit-appearance: none; /* Personalizar el "pulgar" o "thumb" del slider */
@@ -101,7 +90,6 @@
       border-radius: 50%;
       cursor: pointer;
     }
-
     /* Estilo del thumb en Firefox */
     .volume-slider::-moz-range-thumb {
       width: 15px;
@@ -110,7 +98,6 @@
       border-radius: 50%;
       cursor: pointer;
     }
-
     /* Contenedor del reproductor de radio */
     .radio-container {
       position: fixed;
@@ -126,14 +113,12 @@
       transform: translateY(100%); /* Ocultar el widget por defecto */
       transition: transform 0.3s ease; /* Animación suave */
     }
-
     .radio-container iframe {
       width: 100%; /* Mantener el ancho completo */
       height: 165px; /* Altura ajustada para el iframe */
       border: none;
       pointer-events: auto; /* Habilitar interacciones */
     }
-
     /* Botón/indicador para activar el widget */
     .radio-trigger {
       position: fixed;
@@ -152,11 +137,9 @@
       color: white;
       transition: background-color 0.3s ease;
     }
-
     .radio-trigger:hover {
       background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
     }
-
     /* Mostrar el widget al hacer clic en el indicador */
     .radio-container.visible {
       transform: translateY(0); /* Mover el widget hacia arriba */
@@ -167,69 +150,43 @@
   <div class="container">
     <!-- Video 1 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="jTDk5CswBVk">
-        <iframe 
-          id="video1" 
-          src="https://www.youtube.com/embed/jTDk5CswBVk?autoplay=1&mute=1&controls=0&loop=1&playlist=jTDk5CswBVk&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
+      <div class="video-container" data-video-id="video1">
+        <iframe id="video1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <div class="overlay"></div> <!-- Capa superpuesta -->
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="0" disabled>
     </div>
     <!-- Video 2 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="cb12KmMMDJA">
-        <iframe 
-          id="video2" 
-          src=" https://www.youtube.com/embed/cb12KmMMDJA?autoplay=1&mute=1&controls=0&loop=1&playlist=cb12KmMMDJA&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
+      <div class="video-container" data-video-id="video2">
+        <iframe id="video2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <div class="overlay"></div> <!-- Capa superpuesta -->
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="1" disabled>
     </div>
     <!-- Video 3 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="BTaSHvWJW5A">
-        <iframe 
-          id="video3" 
-          src=" https://www.youtube.com/embed/BTaSHvWJW5A?autoplay=1&mute=1&controls=0&loop=1&playlist=BTaSHvWJW5A&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
+      <div class="video-container" data-video-id="video3">
+        <iframe id="video3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <div class="overlay"></div> <!-- Capa superpuesta -->
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="2" disabled>
     </div>
     <!-- Video 4 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="avly0uwZzOE">
-        <iframe 
-          id="video4" 
-          src=" https://www.youtube.com/embed/avly0uwZzOE?autoplay=1&mute=1&controls=0&loop=1&playlist=avly0uwZzOE&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
+      <div class="video-container" data-video-id="video4">
+        <iframe id="video4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <div class="overlay"></div> <!-- Capa superpuesta -->
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="3" disabled>
     </div>
   </div>
-
   <!-- Indicador para activar el widget -->
   <div class="radio-trigger">📻</div>
-
   <!-- Reproductor de radio -->
   <div class="radio-container">
     <iframe 
-      src=" https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
+      src="https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
       border="0" 
       scrolling="no" 
       frameborder="0" 
@@ -237,22 +194,32 @@
       allowtransparency="true">
     </iframe>
   </div>
-
   <script>
     // Variables globales
+    const videoIds = [
+      "jTDk5CswBVk", // ID del video 1
+      "cb12KmMMDJA", // ID del video 2
+      "BTaSHvWJW5A", // ID del video 3
+      "avly0uwZzOE"  // ID del video 4
+    ];
+
     let players = [];
     const containers = document.querySelectorAll('.video-container');
     const volumeSliders = document.querySelectorAll('.volume-slider');
 
+    // Función para cargar los videos en los iframes
+    function loadVideos() {
+      containers.forEach((container, index) => {
+        const iframe = container.querySelector('iframe');
+        const videoId = videoIds[index];
+        iframe.src = ` https://www.youtube.com/embed/ ${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
+      });
+    }
+
     // Cargar la API de YouTube
     function onYouTubeIframeAPIReady() {
       console.log('API de YouTube cargada correctamente.');
-      players = [
-        new YT.Player('video1', { events: { 'onReady': onPlayerReady } }),
-        new YT.Player('video2', { events: { 'onReady': onPlayerReady } }),
-        new YT.Player('video3', { events: { 'onReady': onPlayerReady } }),
-        new YT.Player('video4', { events: { 'onReady': onPlayerReady } })
-      ];
+      players = videoIds.map((_, index) => new YT.Player(`video${index + 1}`, { events: { 'onReady': onPlayerReady } }));
     }
 
     // Función que se ejecuta cuando los videos están listos
@@ -267,7 +234,7 @@
     // Agregar eventos de clic a cada capa superpuesta
     containers.forEach((container, index) => {
       const overlay = container.querySelector('.overlay');
-      const videoId = container.dataset.videoId;
+      const videoId = videoIds[index];
       const slider = volumeSliders[index];
 
       // Evento de clic simple
@@ -316,7 +283,7 @@
           console.log('Video mutado por doble clic:', videoId);
         }
         // Construir la URL del video con parámetros para pantalla completa
-        const videoUrl = ` https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
+        const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
         // Abrir el enlace del video en una ventana emergente
         const popupWidth = 800; // Ancho de la ventana emergente
         const popupHeight = 600; // Alto de la ventana emergente
@@ -365,6 +332,11 @@
         radioContainer.classList.remove('visible');
       }
     });
+
+    // Cargar los videos al iniciar
+    loadVideos();
   </script>
+</body>
+</html>
 </body>
 </html>
