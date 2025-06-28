@@ -140,15 +140,15 @@
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 50px;
-      height: 10px;
+      width: 80px; /* Ancho aumentado */
+      height: 30px; /* Altura aumentada */
       background-color: red; /* Color llamativo para el indicador */
-      border-radius: 5px 5px 0 0; /* Bordes redondeados */
+      border-radius: 15px 15px 0 0; /* Bordes redondeados */
       cursor: pointer;
       z-index: 1001; /* Encima del widget */
       text-align: center;
-      line-height: 10px;
-      font-size: 10px;
+      line-height: 30px; /* Alinear texto verticalmente */
+      font-size: 18px; /* Tamaño de fuente aumentado */
       color: white;
       transition: background-color 0.3s ease;
     }
@@ -157,9 +157,9 @@
       background-color: orange; /* Cambiar color al pasar el mouse */
     }
 
-    /* Clase para mantener el widget visible */
-    .radio-container.visible {
-      transform: translateY(0); /* Mostrar el widget */
+    /* Mostrar el widget al pasar el mouse sobre el indicador */
+    .radio-trigger:hover + .radio-container {
+      transform: translateY(0); /* Mover el widget hacia arriba */
     }
   </style>
 </head>
@@ -349,24 +349,6 @@
     tag.src = " https://www.youtube.com/iframe_api ";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // Comportamiento del widget de radio
-    const radioTrigger = document.querySelector('.radio-trigger');
-    const radioContainer = document.querySelector('.radio-container');
-
-    // Mostrar u ocultar el widget al hacer clic en el indicador
-    radioTrigger.addEventListener('click', () => {
-      radioContainer.classList.toggle('visible');
-    });
-
-    // Ocultar el widget al hacer clic fuera de él
-    document.addEventListener('click', (event) => {
-      if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
-        radioContainer.classList.remove('visible');
-      }
-    });
   </script>
-</body>
-</html>
 </body>
 </html>
