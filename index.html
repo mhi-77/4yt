@@ -18,7 +18,7 @@
       grid-template-columns: repeat(2, 1fr); /* Dos columnas */
       grid-template-rows: repeat(2, 1fr); /* Dos filas */
       gap: 2px; /* Espacio entre los cuadrantes */
-      height: calc(100vh - 82.5px); /* Altura reducida para dejar espacio al reproductor */
+      height: 100vh; /* Altura total de la pantalla */
       background-color: black; /* Fondo negro para la cuadrícula */
     }
 
@@ -117,7 +117,7 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 82.5px;
+      height: 165px; /* Altura restaurada a 165px */
       background-color: black; /* Fondo oscuro para coincidir con el diseño */
       z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
       display: flex;
@@ -129,7 +129,7 @@
 
     .radio-container iframe {
       width: 100%; /* Mantener el ancho completo */
-      height: 82.5px; /* Altura ajustada para el iframe */
+      height: 165px; /* Altura ajustada para el iframe */
       border: none;
       pointer-events: auto; /* Habilitar interacciones */
     }
@@ -366,5 +366,7 @@
       }
     });
   </script>
+</body>
+</html>
 </body>
 </html>
