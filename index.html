@@ -18,7 +18,7 @@
       grid-template-columns: repeat(2, 1fr); /* Dos columnas */
       grid-template-rows: repeat(2, 1fr); /* Dos filas */
       gap: 2px; /* Espacio entre los cuadrantes */
-      height: 100vh; /* Altura total de la pantalla */
+      height: calc(100vh - 82.5px); /* Altura reducida para dejar espacio al reproductor */
       background-color: black; /* Fondo negro para la cuadrícula */
     }
 
@@ -127,14 +127,9 @@
       transition: transform 0.3s ease; /* Animación suave */
     }
 
-    /* Mostrar el widget al pasar el mouse */
-    .radio-trigger:hover + .radio-container {
-      transform: translateY(0); /* Mover el widget hacia arriba */
-    }
-
     .radio-container iframe {
-      width: 100%;
-      height: 100%;
+      width: 100%; /* Mantener el ancho completo */
+      height: 82.5px; /* Altura ajustada para el iframe */
       border: none;
       pointer-events: auto; /* Habilitar interacciones */
     }
@@ -160,6 +155,11 @@
 
     .radio-trigger:hover {
       background-color: orange; /* Cambiar color al pasar el mouse */
+    }
+
+    /* Clase para mantener el widget visible */
+    .radio-container.visible {
+      transform: translateY(0); /* Mostrar el widget */
     }
   </style>
 </head>
@@ -349,6 +349,22 @@
     tag.src = " https://www.youtube.com/iframe_api ";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // Comportamiento del widget de radio
+    const radioTrigger = document.querySelector('.radio-trigger');
+    const radioContainer = document.querySelector('.radio-container');
+
+    // Mostrar u ocultar el widget al hacer clic en el indicador
+    radioTrigger.addEventListener('click', () => {
+      radioContainer.classList.toggle('visible');
+    });
+
+    // Ocultar el widget al hacer clic fuera de él
+    document.addEventListener('click', (event) => {
+      if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
+        radioContainer.classList.remove('visible');
+      }
+    });
   </script>
 </body>
 </html>
