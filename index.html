@@ -12,14 +12,16 @@
       height: 100%;
       overflow: hidden;
     }
+
     .container {
       display: grid;
       grid-template-columns: repeat(2, 1fr); /* Dos columnas */
       grid-template-rows: repeat(2, 1fr); /* Dos filas */
       gap: 2px; /* Espacio entre los cuadrantes */
-      height: 100vh; /* Altura total de la pantalla */
+      height: calc(100vh - 65px); /* Altura reducida para dejar espacio a los widgets */
       background-color: black; /* Fondo negro para la cuadrícula */
     }
+
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -27,13 +29,16 @@
       display: flex; /* Contenedor flexible para alinear el video y el slider */
       align-items: center; /* Centrar verticalmente */
     }
+
     /* Ajuste de posición para los sliders */
     .video-wrapper:nth-child(odd) {
       flex-direction: row-reverse; /* Sliders a la izquierda para videos 1 y 3 */
     }
+
     .video-wrapper:nth-child(even) {
       flex-direction: row; /* Sliders a la derecha para videos 2 y 4 */
     }
+
     .video-container {
       position: relative;
       width: calc(100% - 20px); /* Dejar espacio para el slider */
@@ -43,9 +48,11 @@
       box-sizing: border-box; /* Incluir el borde en el cálculo del tamaño */
       transition: all 0.3s ease; /* Animación suave para cambios visuales */
     }
+
     .video-container.active {
       border: 7px solid red; /* Borde rojo más grueso para el video activo */
     }
+
     iframe {
       position: absolute;
       top: 50%;
@@ -55,6 +62,7 @@
       height: 100%;
       pointer-events: none; /* Desactivar interacciones directas con el iframe */
     }
+
     .overlay {
       position: absolute;
       top: 0;
@@ -64,6 +72,7 @@
       cursor: pointer; /* Indica que es interactivo */
       background: rgba(0, 0, 0, 0); /* Capa transparente */
     }
+
     /* Cambiar el color del slider */
     .volume-slider {
       width: 80px; /* Ancho del slider */
@@ -77,9 +86,11 @@
       opacity: 0; /* Inicialmente invisible */
       transition: opacity 0.3s ease; /* Animación suave */
     }
+
     .volume-slider.visible {
       opacity: 1; /* Hacer visible el slider */
     }
+
     /* Estilo del thumb en navegadores basados en WebKit */
     .volume-slider::-webkit-slider-thumb {
       -webkit-appearance: none; /* Personalizar el "pulgar" o "thumb" del slider */
@@ -90,6 +101,7 @@
       border-radius: 50%;
       cursor: pointer;
     }
+
     /* Estilo del thumb en Firefox */
     .volume-slider::-moz-range-thumb {
       width: 15px;
@@ -98,13 +110,14 @@
       border-radius: 50%;
       cursor: pointer;
     }
-    /* Contenedor del reproductor de radio */
+
+    /* Contenedor del reproductor de radio (inferior) */
     .radio-container {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 165px; /* Altura restaurada a 165px */
+      height: 32.5px; /* Altura ajustada */
       background-color: black; /* Fondo oscuro para coincidir con el diseño */
       z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
       display: flex;
@@ -113,36 +126,91 @@
       transform: translateY(100%); /* Ocultar el widget por defecto */
       transition: transform 0.3s ease; /* Animación suave */
     }
+
     .radio-container iframe {
       width: 100%; /* Mantener el ancho completo */
-      height: 165px; /* Altura ajustada para el iframe */
+      height: 32.5px; /* Altura ajustada para el iframe */
       border: none;
       pointer-events: auto; /* Habilitar interacciones */
     }
-    /* Botón/indicador para activar el widget */
+
+    /* Botón/indicador para activar el widget inferior */
     .radio-trigger {
       position: fixed;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px; /* Ancho del contenedor */
-      height: 30px; /* Altura del contenedor */
-      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Color predeterminado: Naranja degradee con 80% de opacidad */
+      width: 80px; /* Ancho aumentado */
+      height: 30px; /* Altura aumentada */
+      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Degradado naranja */
       border-radius: 15px 15px 0 0; /* Bordes redondeados */
       cursor: pointer;
       z-index: 1001; /* Encima del widget */
       text-align: center;
       line-height: 30px; /* Alinear texto verticalmente */
-      font-size: 24px; /* Tamaño de fuente */
+      font-size: 24px; /* Tamaño de fuente aumentado */
       color: white;
       transition: background-color 0.3s ease;
     }
+
     .radio-trigger:hover {
-      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Degradado rojo */
     }
-    /* Mostrar el widget al hacer clic en el indicador */
+
+    /* Mostrar el widget inferior al hacer clic en el indicador */
     .radio-container.visible {
       transform: translateY(0); /* Mover el widget hacia arriba */
+    }
+
+    /* Contenedor del reproductor de la parte superior */
+    .top-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 32.5px; /* Altura igual al widget inferior */
+      background-color: black; /* Fondo oscuro para coincidir con el diseño */
+      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
+      display: flex;
+      justify-content: center; /* Centrar horizontalmente el iframe */
+      align-items: center; /* Centrar verticalmente el iframe */
+      transform: translateY(-100%); /* Ocultar el widget por defecto */
+      transition: transform 0.3s ease; /* Animación suave */
+    }
+
+    .top-container iframe {
+      width: 100%; /* Mantener el ancho completo */
+      height: 32.5px; /* Altura ajustada para el iframe */
+      border: none;
+      pointer-events: auto; /* Habilitar interacciones */
+    }
+
+    /* Botón/indicador para activar el widget superior */
+    .top-trigger {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px; /* Ancho aumentado */
+      height: 30px; /* Altura aumentada */
+      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Degradado naranja */
+      border-radius: 0 0 15px 15px; /* Bordes redondeados en la parte inferior */
+      cursor: pointer;
+      z-index: 1001; /* Encima del widget */
+      text-align: center;
+      line-height: 30px; /* Alinear texto verticalmente */
+      font-size: 24px; /* Tamaño de fuente aumentado */
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .top-trigger:hover {
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Degradado rojo */
+    }
+
+    /* Mostrar el widget superior al hacer clic en el indicador */
+    .top-container.visible {
+      transform: translateY(0); /* Mover el widget hacia abajo */
     }
   </style>
 </head>
@@ -150,10 +218,10 @@
   <div class="container">
     <!-- Video 1 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="video1Id">
+      <div class="video-container" data-video-id="jTDk5CswBVk">
         <iframe 
           id="video1" 
-          src="" 
+          src="https://www.youtube.com/embed/jTDk5CswBVk?autoplay=1&mute=1&controls=0&loop=1&playlist=jTDk5CswBVk&enablejsapi=1" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -162,12 +230,13 @@
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="0" disabled>
     </div>
+
     <!-- Video 2 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="video2Id">
+      <div class="video-container" data-video-id="cb12KmMMDJA">
         <iframe 
           id="video2" 
-          src="" 
+          src=" https://www.youtube.com/embed/cb12KmMMDJA?autoplay=1&mute=1&controls=0&loop=1&playlist=cb12KmMMDJA&enablejsapi=1" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -176,12 +245,13 @@
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="1" disabled>
     </div>
+
     <!-- Video 3 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="video3Id">
+      <div class="video-container" data-video-id="BTaSHvWJW5A">
         <iframe 
           id="video3" 
-          src="" 
+          src=" https://www.youtube.com/embed/BTaSHvWJW5A?autoplay=1&mute=1&controls=0&loop=1&playlist=BTaSHvWJW5A&enablejsapi=1" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -190,12 +260,13 @@
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="2" disabled>
     </div>
+
     <!-- Video 4 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="video4Id">
+      <div class="video-container" data-video-id="avly0uwZzOE">
         <iframe 
           id="video4" 
-          src="" 
+          src=" https://www.youtube.com/embed/avly0uwZzOE?autoplay=1&mute=1&controls=0&loop=1&playlist=avly0uwZzOE&enablejsapi=1" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -205,9 +276,26 @@
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="3" disabled>
     </div>
   </div>
-  <!-- Indicador para activar el widget -->
+
+  <!-- Indicador para activar el widget superior -->
+  <div class="top-trigger">📻</div>
+
+  <!-- Reproductor de la parte superior -->
+  <div class="top-container">
+    <iframe 
+      src=" https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
+      border="0" 
+      scrolling="no" 
+      frameborder="0" 
+      allow="autoplay; clipboard-write" 
+      allowtransparency="true">
+    </iframe>
+  </div>
+
+  <!-- Indicador para activar el widget inferior -->
   <div class="radio-trigger">📻</div>
-  <!-- Reproductor de radio -->
+
+  <!-- Reproductor de la parte inferior -->
   <div class="radio-container">
     <iframe 
       src=" https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
@@ -218,6 +306,7 @@
       allowtransparency="true">
     </iframe>
   </div>
+
   <script>
     // Variables globales para los IDs y nombres de los videos
     const video1Id = "jTDk5CswBVk";
@@ -311,7 +400,7 @@
           console.log('Video mutado por doble clic:', videoId);
         }
         // Construir la URL del video con parámetros para pantalla completa
-        const videoUrl = ` https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
+        const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
         // Abrir el enlace del video en una ventana emergente
         const popupWidth = 800; // Ancho de la ventana emergente
         const popupHeight = 600; // Alto de la ventana emergente
@@ -341,23 +430,39 @@
 
     // Cargar la API de YouTube
     const tag = document.createElement('script');
-    tag.src = "  https://www.youtube.com/iframe_api  ";
+    tag.src = " https://www.youtube.com/iframe_api ";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // Comportamiento del widget de radio
+    // Comportamiento del widget de radio inferior
     const radioTrigger = document.querySelector('.radio-trigger');
     const radioContainer = document.querySelector('.radio-container');
 
-    // Alternar la visibilidad del widget al hacer clic en el indicador
+    // Alternar la visibilidad del widget inferior al hacer clic en el indicador
     radioTrigger.addEventListener('click', () => {
       radioContainer.classList.toggle('visible');
     });
 
-    // Ocultar el widget al hacer clic fuera de él
+    // Ocultar el widget inferior al hacer clic fuera de él
     document.addEventListener('click', (event) => {
       if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
         radioContainer.classList.remove('visible');
+      }
+    });
+
+    // Comportamiento del widget de la parte superior
+    const topTrigger = document.querySelector('.top-trigger');
+    const topContainer = document.querySelector('.top-container');
+
+    // Alternar la visibilidad del widget superior al hacer clic en el indicador
+    topTrigger.addEventListener('click', () => {
+      topContainer.classList.toggle('visible');
+    });
+
+    // Ocultar el widget superior al hacer clic fuera de él
+    document.addEventListener('click', (event) => {
+      if (!topContainer.contains(event.target) && !topTrigger.contains(event.target)) {
+        topContainer.classList.remove('visible');
       }
     });
   </script>
