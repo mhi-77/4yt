@@ -6,7 +6,6 @@
   <title>Página con Videos Divididos</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="32x32">
   <style>
-    /* Contenido original del CSS */
     body, html {
       margin: 0;
       padding: 0;
@@ -15,76 +14,203 @@
     }
     .container {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      gap: 2px;
-      height: calc(100vh - 165px); /* Ajustado para dejar espacio al widget de radio */
-      background-color: black;
+      grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+      grid-template-rows: repeat(2, 1fr); /* Dos filas */
+      gap: 2px; /* Espacio entre los cuadrantes */
+      height: 100vh; /* Altura total de la pantalla */
+      background-color: black; /* Fondo negro para la cuadrícula */
     }
-    /* Resto del CSS original... */
-
-    /* Estilos para el indicador del iframe superior */
-    .config-trigger {
-      position: fixed;
-      top: 0;
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex; /* Contenedor flexible para alinear el video y el slider */
+      align-items: center; /* Centrar verticalmente */
+    }
+    /* Ajuste de posición para los sliders */
+    .video-wrapper:nth-child(odd) {
+      flex-direction: row-reverse; /* Sliders a la izquierda para videos 1 y 3 */
+    }
+    .video-wrapper:nth-child(even) {
+      flex-direction: row; /* Sliders a la derecha para videos 2 y 4 */
+    }
+    .video-container {
+      position: relative;
+      width: calc(100% - 20px); /* Dejar espacio para el slider */
+      height: 100%;
+      overflow: hidden;
+      border: 7px solid black; /* Borde negro inicial */
+      box-sizing: border-box; /* Incluir el borde en el cálculo del tamaño */
+      transition: all 0.3s ease; /* Animación suave para cambios visuales */
+    }
+    .video-container.active {
+      border: 7px solid red; /* Borde rojo más grueso para el video activo */
+    }
+    iframe {
+      position: absolute;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      width: 40px; /* Ancho fijo */
-      height: 25px; /* Altura fija */
-      background: rgba(0, 0, 255, 0.7); /* Azul con 70% de opacidad */
-      border-radius: 15px; /* Bordes redondeados */
-      cursor: pointer;
-      z-index: 1001; /* Encima de otros elementos */
-      text-align: center;
-      line-height: 25px; /* Centrar texto verticalmente */
-      font-size: 18px; /* Tamaño del ícono */
-      color: white;
-      transition: background-color 0.3s ease; /* Animación suave */
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Desactivar interacciones directas con el iframe */
     }
-    .config-trigger:hover {
-      background: rgba(0, 191, 255, 0.7); /* Celeste con 70% de opacidad */
-    }
-
-    /* Estilos para el contenedor del iframe superior */
-    .config-container {
-      position: fixed;
+    .overlay {
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100px; /* Altura fija */
-      background-color: rgba(0, 0, 0, 0.9); /* Fondo oscuro semi-transparente */
-      z-index: 1000; /* Encima de otros elementos */
+      height: 100%;
+      cursor: pointer; /* Indica que es interactivo */
+      background: rgba(0, 0, 0, 0); /* Capa transparente */
+    }
+    /* Cambiar el color del slider */
+    .volume-slider {
+      width: 80px; /* Ancho del slider */
+      height: 4px; /* Altura igual al contenedor */
+      background: #333; /* Color de fondo del slider */
+      outline: none;
+      writing-mode: bt-lr; /* Forzar orientación vertical */
+      direction: rtl; /* Invertir la dirección para que el valor máximo esté arriba */
+      transform: rotate(90deg); /* Rotar el slider para que funcione correctamente */
+      margin: 0 1px; /* Espacio entre el video y el slider */
+      opacity: 0; /* Inicialmente invisible */
+      transition: opacity 0.3s ease; /* Animación suave */
+    }
+    .volume-slider.visible {
+      opacity: 1; /* Hacer visible el slider */
+    }
+    /* Estilo del thumb en navegadores basados en WebKit */
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Personalizar el "pulgar" o "thumb" del slider */
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      background: red; /* Color del pulgar */
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    /* Estilo del thumb en Firefox */
+    .volume-slider::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      background: red; /* Color del pulgar o thumb para Firefox */
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    /* Contenedor del reproductor de radio */
+    .radio-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 165px; /* Altura restaurada a 165px */
+      background-color: black; /* Fondo oscuro para coincidir con el diseño */
+      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
       display: flex;
-      justify-content: center; /* Centrar horizontalmente */
-      align-items: center; /* Centrar verticalmente */
-      transform: translateY(-100%); /* Ocultar inicialmente */
+      justify-content: center; /* Centrar horizontalmente el iframe */
+      align-items: center; /* Centrar verticalmente el iframe */
+      transform: translateY(100%); /* Ocultar el widget por defecto */
       transition: transform 0.3s ease; /* Animación suave */
     }
-    .config-container.visible {
-      transform: translateY(0); /* Mostrar el iframe */
+    .radio-container iframe {
+      width: 100%; /* Mantener el ancho completo */
+      height: 165px; /* Altura ajustada para el iframe */
+      border: none;
+      pointer-events: auto; /* Habilitar interacciones */
+    }
+    /* Botón/indicador para activar el widget */
+    .radio-trigger {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px; /* Ancho del contenedor */
+      height: 30px; /* Altura del contenedor */
+      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Color predeterminado: Naranja degradee con 80% de opacidad */
+      border-radius: 15px 15px 0 0; /* Bordes redondeados */
+      cursor: pointer;
+      z-index: 1001; /* Encima del widget */
+      text-align: center;
+      line-height: 30px; /* Alinear texto verticalmente */
+      font-size: 24px; /* Tamaño de fuente */
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    .radio-trigger:hover {
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
+    }
+    /* Mostrar el widget al hacer clic en el indicador */
+    .radio-container.visible {
+      transform: translateY(0); /* Mover el widget hacia arriba */
     }
   </style>
 </head>
 <body>
-  <!-- Contenido original del HTML -->
   <div class="container">
     <!-- Video 1 -->
     <div class="video-wrapper">
-      <div class="video-container" data-video-id="video1">
-        <iframe id="video1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <div class="video-container" data-video-id="video1Id">
+        <iframe 
+          id="video1" 
+          src="" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
         <div class="overlay"></div> <!-- Capa superpuesta -->
       </div>
       <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="0" disabled>
     </div>
-    <!-- Repetir para los demás videos... -->
+    <!-- Video 2 -->
+    <div class="video-wrapper">
+      <div class="video-container" data-video-id="video2Id">
+        <iframe 
+          id="video2" 
+          src="" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+        <div class="overlay"></div> <!-- Capa superpuesta -->
+      </div>
+      <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="1" disabled>
+    </div>
+    <!-- Video 3 -->
+    <div class="video-wrapper">
+      <div class="video-container" data-video-id="video3Id">
+        <iframe 
+          id="video3" 
+          src="" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+        <div class="overlay"></div> <!-- Capa superpuesta -->
+      </div>
+      <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="2" disabled>
+    </div>
+    <!-- Video 4 -->
+    <div class="video-wrapper">
+      <div class="video-container" data-video-id="video4Id">
+        <iframe 
+          id="video4" 
+          src="" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+        <div class="overlay"></div> <!-- Capa superpuesta -->
+      </div>
+      <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="3" disabled>
+    </div>
   </div>
-
-  <!-- Indicador para activar el widget de radio -->
+  <!-- Indicador para activar el widget -->
   <div class="radio-trigger">📻</div>
   <!-- Reproductor de radio -->
   <div class="radio-container">
     <iframe 
-      src="https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
+      src=" https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
       border="0" 
       scrolling="no" 
       frameborder="0" 
@@ -92,43 +218,146 @@
       allowtransparency="true">
     </iframe>
   </div>
-
-  <!-- Indicador para activar el iframe superior -->
-  <div class="config-trigger">⚙️</div>
-
-  <!-- Contenedor del iframe superior -->
-  <div class="config-container">
-    <!-- Contenido del iframe se resolverá más tarde -->
-  </div>
-
   <script>
-    // Contenido original del script...
+    // Variables globales para los IDs y nombres de los videos
+    const video1Id = "jTDk5CswBVk";
+    const video1Name = "Video 1 Name";
+    const video2Id = "cb12KmMMDJA";
+    const video2Name = "Video 2 Name";
+    const video3Id = "BTaSHvWJW5A";
+    const video3Name = "Video 3 Name";
+    const video4Id = "avly0uwZzOE";
+    const video4Name = "Video 4 Name";
+
+    // Asignar los IDs a los iframes
+    document.getElementById("video1").src = ` https://www.youtube.com/embed/ ${video1Id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video1Id}&enablejsapi=1`;
+    document.getElementById("video2").src = `https://www.youtube.com/embed/ ${video2Id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video2Id}&enablejsapi=1`;
+    document.getElementById("video3").src = `https://www.youtube.com/embed/ ${video3Id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video3Id}&enablejsapi=1`;
+    document.getElementById("video4").src = `https://www.youtube.com/embed/ ${video4Id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video4Id}&enablejsapi=1`;
+
+    let players = [];
+    const containers = document.querySelectorAll('.video-container');
+    const volumeSliders = document.querySelectorAll('.volume-slider');
+
+    // Cargar la API de YouTube
+    function onYouTubeIframeAPIReady() {
+      console.log('API de YouTube cargada correctamente.');
+      players = [
+        new YT.Player('video1', { events: { 'onReady': onPlayerReady } }),
+        new YT.Player('video2', { events: { 'onReady': onPlayerReady } }),
+        new YT.Player('video3', { events: { 'onReady': onPlayerReady } }),
+        new YT.Player('video4', { events: { 'onReady': onPlayerReady } })
+      ];
+    }
+
+    // Función que se ejecuta cuando los videos están listos
+    function onPlayerReady(event) {
+      const player = event.target;
+      console.log('Video listo:', player.getIframe().id);
+      // Silenciar todos los videos al inicio
+      player.mute();
+      player.playVideo();
+    }
+
+    // Agregar eventos de clic a cada capa superpuesta
+    containers.forEach((container, index) => {
+      const overlay = container.querySelector('.overlay');
+      const videoId = container.dataset.videoId;
+      const slider = volumeSliders[index];
+
+      // Evento de clic simple
+      overlay.addEventListener('click', () => {
+        const currentPlayer = players[index];
+        // Si el contenedor ya está activo, mutear el video
+        if (container.classList.contains('active')) {
+          currentPlayer.mute();
+          container.classList.remove('active');
+          slider.classList.remove('visible'); // Ocultar el slider
+          slider.disabled = true; // Deshabilitar el slider
+          console.log('Video mutado:', videoId);
+        } else {
+          // Remover la clase 'active' de todos los contenedores
+          containers.forEach((cont) => {
+            cont.classList.remove('active');
+          });
+          // Ocultar y deshabilitar todos los sliders
+          volumeSliders.forEach((s) => {
+            s.classList.remove('visible');
+            s.disabled = true;
+          });
+          // Silenciar todos los videos
+          players.forEach((player) => {
+            if (player && player.mute) player.mute();
+          });
+          // Quitar el mute al video seleccionado
+          if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
+          // Agregar la clase 'active' al contenedor seleccionado
+          container.classList.add('active');
+          slider.classList.add('visible'); // Mostrar el slider
+          slider.disabled = false; // Habilitar el slider
+          console.log('Video activado:', videoId);
+        }
+      });
+
+      // Evento de doble clic
+      overlay.addEventListener('dblclick', () => {
+        const currentPlayer = players[index];
+        // Mutear el video si está activo
+        if (container.classList.contains('active')) {
+          currentPlayer.mute();
+          container.classList.remove('active');
+          slider.classList.remove('visible'); // Ocultar el slider
+          slider.disabled = true; // Deshabilitar el slider
+          console.log('Video mutado por doble clic:', videoId);
+        }
+        // Construir la URL del video con parámetros para pantalla completa
+        const videoUrl = ` https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
+        // Abrir el enlace del video en una ventana emergente
+        const popupWidth = 800; // Ancho de la ventana emergente
+        const popupHeight = 600; // Alto de la ventana emergente
+        const left = (window.screen.width - popupWidth) / 2; // Centrado horizontal
+        const top = (window.screen.height - popupHeight) / 2; // Centrado vertical
+        window.open(
+          videoUrl,
+          'VideoPopup',
+          `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
+        );
+        console.log('Enlace abierto en ventana emergente:', videoUrl);
+      });
+    });
+
+    // Agregar eventos a los controles de volumen
+    volumeSliders.forEach((slider) => {
+      const videoIndex = slider.dataset.videoIndex;
+      slider.addEventListener('input', () => {
+        const volume = slider.value / 100; // Convertir el valor del slider a un rango de 0 a 1
+        const player = players[videoIndex];
+        if (player && player.setVolume) {
+          player.setVolume(volume * 100); // Establecer el volumen del video
+          console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
+        }
+      });
+    });
+
+    // Cargar la API de YouTube
+    const tag = document.createElement('script');
+    tag.src = "  https://www.youtube.com/iframe_api  ";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // Comportamiento del widget de radio
     const radioTrigger = document.querySelector('.radio-trigger');
     const radioContainer = document.querySelector('.radio-container');
 
-    // Comportamiento del widget de radio
+    // Alternar la visibilidad del widget al hacer clic en el indicador
     radioTrigger.addEventListener('click', () => {
       radioContainer.classList.toggle('visible');
     });
+
+    // Ocultar el widget al hacer clic fuera de él
     document.addEventListener('click', (event) => {
       if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
         radioContainer.classList.remove('visible');
-      }
-    });
-
-    // Nuevo script para el iframe superior
-    const configTrigger = document.querySelector('.config-trigger');
-    const configContainer = document.querySelector('.config-container');
-
-    // Alternar la visibilidad del iframe superior
-    configTrigger.addEventListener('click', () => {
-      configContainer.classList.toggle('visible');
-    });
-
-    // Ocultar el iframe al hacer clic fuera
-    document.addEventListener('click', (event) => {
-      if (!configContainer.contains(event.target) && !configTrigger.contains(event.target)) {
-        configContainer.classList.remove('visible');
       }
     });
   </script>
