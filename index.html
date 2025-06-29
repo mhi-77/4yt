@@ -248,77 +248,83 @@
       addEventListeners();
     }
 
-    // Agregar eventos de clic y doble clic
-    function addEventListeners() {
-      containers.forEach((container, index) => {
-        const overlay = container.querySelector('.overlay');
-        const slider = volumeSliders[index];
-        const currentPlayer = players[index];
+    // Agregar eventos de clic a cada capa superpuesta
+function addEventListeners() {
+  containers.forEach((container, index) => {
+    const overlay = container.querySelector('.overlay');
+    const slider = volumeSliders[index];
+    const currentPlayer = players[index];
 
-        // Evento de clic simple
-        overlay.addEventListener('click', () => {
-          if (container.classList.contains('active')) {
-            // Si el contenedor ya está activo, mutear el video
-            currentPlayer.mute();
-            container.classList.remove('active');
-            slider.classList.remove('visible');
-            slider.disabled = true;
-            console.log('Video mutado:', container.dataset.videoId);
-          } else {
-            // Remover la clase 'active' de todos los contenedores
-            containers.forEach((cont) => cont.classList.remove('active'));
-            // Ocultar y deshabilitar todos los sliders
-            volumeSliders.forEach((s) => {
-              s.classList.remove('visible');
-              s.disabled = true;
-            });
-            // Silenciar todos los videos
-            players.forEach((player) => player.mute());
-            // Quitar el mute al video seleccionado
-            currentPlayer.unMute();
-            // Agregar la clase 'active' al contenedor seleccionado
-            container.classList.add('active');
-            slider.classList.add('visible');
-            slider.disabled = false;
-            console.log('Video activado:', container.dataset.videoId);
-          }
+    // Evento de clic simple
+    overlay.addEventListener('click', () => {
+      if (container.classList.contains('active')) {
+        // Si el contenedor ya está activo, mutear el video
+        currentPlayer.mute();
+        container.classList.remove('active'); // Quitar el borde rojo
+        slider.classList.remove('visible'); // Ocultar el slider
+        slider.disabled = true; // Deshabilitar el slider
+        console.log('Video mutado:', container.dataset.videoId);
+      } else {
+        // Remover la clase 'active' de todos los contenedores
+        containers.forEach((cont) => cont.classList.remove('active'));
+        // Ocultar y deshabilitar todos los sliders
+        volumeSliders.forEach((s) => {
+          s.classList.remove('visible');
+          s.disabled = true;
         });
+        // Silenciar todos los videos
+        players.forEach((player) => player.mute());
 
-        // Evento de doble clic
-        overlay.addEventListener('dblclick', () => {
-          // Mutear el video si está activo
-          if (container.classList.contains('active')) {
-            currentPlayer.mute();
-            container.classList.remove('active');
-            slider.classList.remove('visible');
-            slider.disabled = true;
-            console.log('Video mutado por doble clic:', container.dataset.videoId);
-          }
-          // Construir la URL del video con parámetros para pantalla completa
-          const videoUrl = `https://www.youtube.com/watch?v=${container.dataset.videoId}&autoplay=1&fs=1`;
-          // Abrir el enlace del video en una ventana emergente
-          const popupWidth = 800;
-          const popupHeight = 600;
-          const left = (window.screen.width - popupWidth) / 2;
-          const top = (window.screen.height - popupHeight) / 2;
-          window.open(videoUrl, 'VideoPopup', `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`);
-          console.log('Enlace abierto en ventana emergente:', videoUrl);
-        });
-      });
+        // Quitar el mute al video seleccionado
+        currentPlayer.unMute();
+        // Agregar la clase 'active' al contenedor seleccionado
+        container.classList.add('active'); // Mostrar el borde rojo
+        slider.classList.add('visible'); // Mostrar el slider
+        slider.disabled = false; // Habilitar el slider
+        console.log('Video activado:', container.dataset.videoId);
+      }
+    });
 
-      // Agregar eventos a los controles de volumen
-      volumeSliders.forEach((slider) => {
-        const videoIndex = slider.dataset.videoIndex;
-        slider.addEventListener('input', () => {
-          const volume = slider.value / 100; // Convertir el valor del slider a un rango de 0 a 1
-          const player = players[videoIndex];
-          if (player && player.setVolume) {
-            player.setVolume(volume * 100); // Establecer el volumen del video
-            console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
-          }
-        });
-      });
-    }
+    // Evento de doble clic
+    overlay.addEventListener('dblclick', () => {
+      // Mutear el video si está activo
+      if (container.classList.contains('active')) {
+        currentPlayer.mute();
+        container.classList.remove('active'); // Quitar el borde rojo
+        slider.classList.remove('visible'); // Ocultar el slider
+        slider.disabled = true; // Deshabilitar el slider
+        console.log('Video mutado por doble clic:', container.dataset.videoId);
+      }
+
+      // Construir la URL del video con parámetros para pantalla completa
+      const videoUrl = `https://www.youtube.com/watch?v=${container.dataset.videoId}&autoplay=1&fs=1`;
+      // Abrir el enlace del video en una ventana emergente
+      const popupWidth = 800;
+      const popupHeight = 600;
+      const left = (window.screen.width - popupWidth) / 2;
+      const top = (window.screen.height - popupHeight) / 2;
+      window.open(
+        videoUrl,
+        'VideoPopup',
+        `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
+      );
+      console.log('Enlace abierto en ventana emergente:', videoUrl);
+    });
+  });
+
+  // Agregar eventos a los controles de volumen
+  volumeSliders.forEach((slider) => {
+    const videoIndex = slider.dataset.videoIndex;
+    slider.addEventListener('input', () => {
+      const volume = slider.value / 100; // Convertir el valor del slider a un rango de 0 a 1
+      const player = players[videoIndex];
+      if (player && player.setVolume) {
+        player.setVolume(volume * 100); // Establecer el volumen del video
+        console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
+      }
+    });
+  });
+}
 
     // Generar dinámicamente la tabla de configuración
     function generateVideoConfigTable() {
