@@ -112,37 +112,11 @@
     }
 
     /* Contenedor del reproductor de radio (inferior) */
-    .radio-container {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 165px; 
-      background-color: black; /* Fondo oscuro para coincidir con el diseño */
-      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
-      display: flex;
-      justify-content: center; /* Centrar horizontalmente el iframe */
-      align-items: center; /* Centrar verticalmente el iframe */
-      transform: translateY(100%); /* Ocultar el widget por defecto */
-      transition: transform 0.3s ease; /* Animación suave */
-    }
-
-    .radio-container iframe {
-      width: 100%; /* Mantener el ancho completo */
-      height: 165px;  /* Altura ajustada para el iframe */
-      border: none;
-      pointer-events: auto; /* Habilitar interacciones */
-    }
-
-    /* Botón/indicador para activar el widget inferior */
-    .radio-trigger {
-      position: fixed;
-      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px; /* Ancho aumentado */
-      height: 30px; /* Altura aumentada */
-      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Degradado naranja */
+      width: 80px; /* Ancho del contenedor */
+      height: 30px; /* Altura del contenedor */
+      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Color predeterminado: Naranja degradee con 80% de opacidad */
       border-radius: 15px 15px 0 0; /* Bordes redondeados */
       cursor: pointer;
       z-index: 1001; /* Encima del widget */
@@ -154,12 +128,63 @@
     }
 
     .radio-trigger:hover {
-      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Degradado rojo */
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
     }
 
-    /* Mostrar el widget inferior al hacer clic en el indicador */
+    /* Mostrar el widget al hacer clic en el indicador */
     .radio-container.visible {
       transform: translateY(0); /* Mover el widget hacia arriba */
+    }
+
+    /* Contenedor de configuraciones de la parte superior */
+    .top-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100px; /* Altura */
+      background-color: black; /* Fondo oscuro para coincidir con el diseño */
+      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
+      display: flex;
+      justify-content: center; /* Centrar horizontalmente el iframe */
+      align-items: center; /* Centrar verticalmente el iframe */
+      transform: translateY(-100%); /* Ocultar el widget por defecto */
+      transition: transform 0.3s ease; /* Animación suave */
+    }
+
+    .top-container iframe {
+      width: 100%; /* Mantener el ancho completo */
+      height: 100px; /* Altura ajustada para el iframe */
+      border: none;
+      pointer-events: auto; /* Habilitar interacciones */
+    }
+
+    /* Botón/indicador para activar el widget superior */
+    .top-trigger {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px; /* Ancho reducido */
+      height: 25px; /* Altura reducida */
+      background: rgba(0, 0, 255, 0.7); /* Azul sólido con 70% de opacidad */
+      border-radius: 0 0 15px 15px; /* Bordes redondeados en la parte inferior */
+      cursor: pointer;
+      z-index: 1001; /* Encima del widget */
+      text-align: center;
+      line-height: 25px; /* Alinear texto verticalmente */
+      font-size: 18px; /* Tamaño de fuente reducido */
+      color: white; /* Color del ícono */
+      transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+    }
+
+    .top-trigger:hover {
+      background: rgba(0, 0, 255, 0.9); /* Azul sólido con 90% de opacidad al pasar el mouse */
+    }
+
+    /* Mostrar el frame superior al hacer clic en el indicador */
+    .top-container.visible {
+      transform: translateY(0); /* Mover el widget hacia abajo */
     }
 
     /* Contenedor de Configuraciones de la parte superior */
@@ -204,17 +229,19 @@
       transition: background-color 0.3s ease;
     }
 
-    .top-trigger:hover {
-      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Degradado rojo */
+    .radio-trigger:hover {
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
     }
 
-    /* Mostrar el frame superior al hacer clic en el indicador */
-    .top-container.visible {
-      transform: translateY(0); /* Mover el widget hacia abajo */
+    /* Mostrar el widget al hacer clic en el indicador */
+    .radio-container.visible {
+      transform: translateY(0); /* Mover el widget hacia arriba */
     }
+    
   </style>
 </head>
 <body>
+  <!-- Contenedor de los videos -->
   <div class="container">
     <!-- Video 1 -->
     <div class="video-wrapper">
@@ -278,7 +305,7 @@
   </div>
 
   <!-- Indicador para activar el widget superior -->
-  <div class="top-trigger">📻</div>
+  <div class="top-trigger">⚙️</div>
 
   <!-- Contenido de la parte superior -->
   <div class="top-container">
