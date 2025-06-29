@@ -6,6 +6,7 @@
   <title>Página con Videos Divididos</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="32x32">
   <style>
+    /* Estilos generales */
     body, html {
       margin: 0;
       padding: 0;
@@ -111,157 +112,37 @@
       cursor: pointer;
     }
 
-    /* Contenedor del reproductor de radio (inferior) */
-    .radio-container {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 165px; /* Altura restaurada a 165px */
-      background-color: black; /* Fondo oscuro para coincidir con el diseño */
-      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
-      display: flex;
-      justify-content: center; /* Centrar horizontalmente el iframe */
-      align-items: center; /* Centrar verticalmente el iframe */
-      transform: translateY(100%); /* Ocultar el widget por defecto */
-      transition: transform 0.3s ease; /* Animación suave */
-    }
-    .radio-container iframe {
-      width: 100%; /* Mantener el ancho completo */
-      height: 165px; /* Altura ajustada para el iframe */
-      border: none;
-      pointer-events: auto; /* Habilitar interacciones */
-    }
-    /* Botón/indicador para activar el widget */
-    .radio-trigger {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px; /* Ancho del contenedor */
-      height: 30px; /* Altura del contenedor */
-      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Color predeterminado: Naranja degradee con 80% de opacidad */
-      border-radius: 15px 15px 0 0; /* Bordes redondeados */
-      cursor: pointer;
-      z-index: 1001; /* Encima del widget */
-      text-align: center;
-      line-height: 30px; /* Alinear texto verticalmente */
-      font-size: 24px; /* Tamaño de fuente */
-      color: white;
-      transition: background-color 0.3s ease;
+   
+
+    /* Estilo para las listas desplegables */
+    .video-select {
+      width: 90%; /* Ancho del select */
+      padding: 2px;
+      border: 1px solid gray; /* Borde gris */
+      background-color: transparent; /* Fondo transparente */
+      color: white; /* Color del texto */
+      text-align: center; /* Centrar el texto */
     }
 
-    .radio-trigger:hover {
-      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
+    /* Estilo para los campos de ID */
+    .video-id {
+      width: 90%; /* Ancho del cuadro de texto */
+      padding: 2px;
+      border: none; /* Sin bordes por defecto */
+      background-color: transparent; /* Fondo transparente */
+      color: gray; /* Color del texto */
+      text-align: center; /* Centrar el texto */
     }
 
-    /* Mostrar el widget al hacer clic en el indicador */
-    .radio-container.visible {
-      transform: translateY(0); /* Mover el widget hacia arriba */
+    /* Hacer el campo de ID editable cuando se selecciona "USUARIO" */
+    .video-id.editable {
+      border: 1px solid gray; /* Agregar borde gris */
+      color: white; /* Cambiar color del texto */
     }
-
-    /* Contenedor de configuraciones de la parte superior */
-    .top-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 150px; /* Altura */
-      background-color: black; /* Fondo oscuro para coincidir con el diseño */
-      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
-      display: flex;
-      justify-content: center; /* Centrar horizontalmente el iframe */
-      align-items: center; /* Centrar verticalmente el iframe */
-      transform: translateY(-100%); /* Ocultar el widget por defecto */
-      transition: transform 0.3s ease; /* Animación suave */
-    }
-
-    .top-container iframe {
-      width: 100%; /* Mantener el ancho completo */
-      height: 100px; /* Altura ajustada para el iframe */
-      border: none;
-      pointer-events: auto; /* Habilitar interacciones */
-    }
-
-    /* Botón/indicador para activar el widget superior */
-    .top-trigger {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px; /* Ancho reducido */
-      height: 28px; /* Altura reducida */
-      background: rgba(0, 0, 255, 0.7); /* Azul sólido con 70% de opacidad */
-      border-radius: 0 0 15px 15px; /* Bordes redondeados en la parte inferior */
-      cursor: pointer;
-      z-index: 1001; /* Encima del widget */
-      text-align: center;
-      line-height: 25px; /* Alinear texto verticalmente */
-      font-size: 18px; /* Tamaño de fuente reducido */
-      color: white; /* Color del ícono */
-      transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
-    }
-
-    .top-trigger:hover {
-      background: rgba(0, 0, 255, 0.9); /* Azul sólido con 90% de opacidad al pasar el mouse */
-    }
-
-    /* Mostrar el frame superior al hacer clic en el indicador */
-    .top-container.visible {
-      transform: translateY(0); /* Mover el widget hacia abajo */
-    }
-
-/* Estilo para el encabezado "Configuración de videos" 
-.config-header {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: black;
-  color: white;
-  padding: 5px 10px;
-  font-size: 16px;
-  font-weight: bold;
-  z-index: 1002;  // Encima del contenido 
-} */
-
-/* Estilo para la tabla dentro del .top-container */
-.top-container table {
-  width: 100%;
-  height: 100%;
-  border-collapse: collapse; /* Eliminar bordes entre celdas */
-  text-align: center;
-  color: white; /* Color predeterminado del texto */
-}
-
-.top-container td {
-  border: none; /* Bordes invisibles */
-  padding: 5px;
-  vertical-align: middle;
-}
-
-.top-container tr:nth-child(odd) {
-  color: white; /* Filas 1 y 3: texto blanco */
-}
-
-.top-container tr:nth-child(even) {
-  color: gray; /* Filas 2 y 4: texto gris */
-}
-
-.top-container input[type="text"] {
-  width: 90%; /* Ajustar el ancho del cuadro de texto */
-  padding: 2px;
-  border: 1px solid gray; /* Borde gris */
-  background-color: transparent; /* Fondo transparente */
-  color: inherit; /* Heredar el color del texto */
-  text-align: center; /* Centrar el texto */
-}
-</style>
-  
+  </style>
 </head>
 <body>
-  <!-- Encabezado separado para "Configuración de videos" -->
-  <div class="config-header">Configuración de videos</div>
+  
 
   <!-- Contenido de la parte superior -->
   <div class="top-container">
@@ -362,6 +243,81 @@
         containers.push(videoContainer);
         volumeSliders.push(volumeSlider);
       }
+
+      // Agregar eventos de clic y doble clic después de crear los contenedores
+      addEventListeners();
+    }
+
+    // Agregar eventos de clic y doble clic
+    function addEventListeners() {
+      containers.forEach((container, index) => {
+        const overlay = container.querySelector('.overlay');
+        const slider = volumeSliders[index];
+        const currentPlayer = players[index];
+
+        // Evento de clic simple
+        overlay.addEventListener('click', () => {
+          if (container.classList.contains('active')) {
+            // Si el contenedor ya está activo, mutear el video
+            currentPlayer.mute();
+            container.classList.remove('active');
+            slider.classList.remove('visible');
+            slider.disabled = true;
+            console.log('Video mutado:', container.dataset.videoId);
+          } else {
+            // Remover la clase 'active' de todos los contenedores
+            containers.forEach((cont) => cont.classList.remove('active'));
+            // Ocultar y deshabilitar todos los sliders
+            volumeSliders.forEach((s) => {
+              s.classList.remove('visible');
+              s.disabled = true;
+            });
+            // Silenciar todos los videos
+            players.forEach((player) => player.mute());
+            // Quitar el mute al video seleccionado
+            currentPlayer.unMute();
+            // Agregar la clase 'active' al contenedor seleccionado
+            container.classList.add('active');
+            slider.classList.add('visible');
+            slider.disabled = false;
+            console.log('Video activado:', container.dataset.videoId);
+          }
+        });
+
+        // Evento de doble clic
+        overlay.addEventListener('dblclick', () => {
+          // Mutear el video si está activo
+          if (container.classList.contains('active')) {
+            currentPlayer.mute();
+            container.classList.remove('active');
+            slider.classList.remove('visible');
+            slider.disabled = true;
+            console.log('Video mutado por doble clic:', container.dataset.videoId);
+          }
+          // Construir la URL del video con parámetros para pantalla completa
+          const videoUrl = `https://www.youtube.com/watch?v=${container.dataset.videoId}&autoplay=1&fs=1`;
+          // Abrir el enlace del video en una ventana emergente
+          const popupWidth = 800;
+          const popupHeight = 600;
+          const left = (window.screen.width - popupWidth) / 2;
+          const top = (window.screen.height - popupHeight) / 2;
+          window.open(videoUrl, 'VideoPopup', `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`);
+          console.log('Enlace abierto en ventana emergente:', videoUrl);
+        });
+      });
+
+      // Agregar eventos a los controles de volumen
+      volumeSliders.forEach((slider) => {
+        const videoIndex = slider.dataset.videoIndex;
+        slider.addEventListener('input', () => {
+          const volume = slider.value / 100; // Convertir el valor del slider a un rango de 0 a 1
+          const player = players[videoIndex];
+          if (player && player.setVolume) {
+            player.setVolume(volume * 100); // Establecer el volumen del video
+            console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
+          }
+        });
+      });
     }
 
     // Generar dinámicamente la tabla de configuración
@@ -442,7 +398,7 @@
             container.setAttribute("data-video-id", selectedValue);
 
             // Actualizar el iframe correspondiente
-            iframe.src = `https://www.youtube.com/embed/ ${selectedValue}?autoplay=1&mute=1&controls=0&loop=1&playlist=${selectedValue}&enablejsapi=1`;
+            iframe.src = ` https://www.youtube.com/embed/ ${selectedValue}?autoplay=1&mute=1&controls=0&loop=1&playlist=${selectedValue}&enablejsapi=1`;
 
             // Actualizar el reproductor de YouTube correspondiente
             if (player && player.loadVideoById) {
