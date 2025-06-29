@@ -186,57 +186,6 @@
     .top-container.visible {
       transform: translateY(0); /* Mover el widget hacia abajo */
     }
-
-    /* Contenedor de Configuraciones de la parte superior */
-    .top-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100px; /* Altura */
-      background-color: black; /* Fondo oscuro para coincidir con el diseño */
-      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
-      display: flex;
-      justify-content: center; /* Centrar horizontalmente el iframe */
-      align-items: center; /* Centrar verticalmente el iframe */
-      transform: translateY(-100%); /* Ocultar el widget por defecto */
-      transition: transform 0.3s ease; /* Animación suave */
-    }
-
-    .top-container iframe {
-      width: 100%; /* Mantener el ancho completo */
-      height: 100px; /* Altura ajustada para el iframe */
-      border: none;
-      pointer-events: auto; /* Habilitar interacciones */
-    }
-
-    /* Botón/indicador para activar el widget superior */
-    .top-trigger {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px; /* Ancho aumentado */
-      height: 30px; /* Altura aumentada */
-      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Degradado naranja */
-      border-radius: 0 0 15px 15px; /* Bordes redondeados en la parte inferior */
-      cursor: pointer;
-      z-index: 1001; /* Encima del widget */
-      text-align: center;
-      line-height: 30px; /* Alinear texto verticalmente */
-      font-size: 24px; /* Tamaño de fuente aumentado */
-      color: white;
-      transition: background-color 0.3s ease;
-    }
-
-    .radio-trigger:hover {
-      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
-    }
-
-    /* Mostrar el widget al hacer clic en el indicador */
-    .radio-container.visible {
-      transform: translateY(0); /* Mover el widget hacia arriba */
-    }
     
   </style>
 </head>
