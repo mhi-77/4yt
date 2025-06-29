@@ -210,8 +210,54 @@
     .top-container.visible {
       transform: translateY(0); /* Mover el widget hacia abajo */
     }
-    
-  </style>
+
+/* Estilo para el encabezado "Configuración de videos" */
+.config-header {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 1002; /* Encima del contenido */
+}
+
+/* Estilo para la tabla dentro del .top-container */
+.top-container table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse; /* Eliminar bordes entre celdas */
+  text-align: center;
+  color: white; /* Color predeterminado del texto */
+}
+
+.top-container td {
+  border: none; /* Bordes invisibles */
+  padding: 5px;
+  vertical-align: middle;
+}
+
+.top-container tr:nth-child(odd) {
+  color: white; /* Filas 1 y 3: texto blanco */
+}
+
+.top-container tr:nth-child(even) {
+  color: gray; /* Filas 2 y 4: texto gris */
+}
+
+.top-container input[type="text"] {
+  width: 90%; /* Ajustar el ancho del cuadro de texto */
+  padding: 2px;
+  border: 1px solid gray; /* Borde gris */
+  background-color: transparent; /* Fondo transparente */
+  color: inherit; /* Heredar el color del texto */
+  text-align: center; /* Centrar el texto */
+}
+</style>
+  
 </head>
 <body>
   <!-- Contenedor de los videos -->
@@ -280,18 +326,31 @@
   <!-- Indicador para activar el widget superior -->
   <div class="top-trigger">⚙️</div>
 
-  <!-- Contenido de la parte superior -->
-  <div class="top-container">
-    <iframe 
-      //src=" https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
-      border="0" 
-      scrolling="no" 
-      frameborder="0" 
-      allow="autoplay; clipboard-write" 
-      allowtransparency="true">
-    </iframe>
-  </div>
+  <!-- Encabezado separado para "Configuración de videos" -->
+<div class="config-header">Configuración de videos</div>
 
+<!-- Contenido de la parte superior -->
+<div class="top-container">
+  <table>
+    <tr>
+      <td>⚙️ <input type="text" value="Video 1 Name" readonly></td>
+      <td>⚙️ <input type="text" value="Video 2 Name" readonly></td>
+    </tr>
+    <tr>
+      <td><input type="text" value="jTDk5CswBVk" readonly></td>
+      <td><input type="text" value="cb12KmMMDJA" readonly></td>
+    </tr>
+    <tr>
+      <td>⚙️ <input type="text" value="Video 3 Name" readonly></td>
+      <td>⚙️ <input type="text" value="Video 4 Name" readonly></td>
+    </tr>
+    <tr>
+      <td><input type="text" value="BTaSHvWJW5A" readonly></td>
+      <td><input type="text" value="avly0uwZzOE" readonly></td>
+    </tr>
+  </table>
+</div>
+  
   <!-- Indicador para activar el widget inferior -->
   <div class="radio-trigger">📻</div>
 
