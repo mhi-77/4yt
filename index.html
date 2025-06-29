@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Página con Videos Divididos</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="32x32">
   <style>
     /* Estilos generales */
     body, html {
@@ -111,44 +110,9 @@
       border-radius: 50%;
       cursor: pointer;
     }
-
-   
-
-    /* Estilo para las listas desplegables */
-    .video-select {
-      width: 90%; /* Ancho del select */
-      padding: 2px;
-      border: 1px solid gray; /* Borde gris */
-      background-color: transparent; /* Fondo transparente */
-      color: white; /* Color del texto */
-      text-align: center; /* Centrar el texto */
-    }
-
-    /* Estilo para los campos de ID */
-    .video-id {
-      width: 90%; /* Ancho del cuadro de texto */
-      padding: 2px;
-      border: none; /* Sin bordes por defecto */
-      background-color: transparent; /* Fondo transparente */
-      color: gray; /* Color del texto */
-      text-align: center; /* Centrar el texto */
-    }
-
-    /* Hacer el campo de ID editable cuando se selecciona "USUARIO" */
-    .video-id.editable {
-      border: 1px solid gray; /* Agregar borde gris */
-      color: white; /* Cambiar color del texto */
-    }
   </style>
 </head>
 <body>
-  
-
-  <!-- Contenido de la parte superior -->
-  <div class="top-container">
-    <table id="video-config-table"></table>
-  </div>
-
   <!-- Contenedor principal de los videos -->
   <div class="container" id="video-container"></div>
 
@@ -161,9 +125,7 @@
       { name: "C5N", id: "jTDk5CswBVk" },
       { name: "TN", id: "cb12KmMMDJA" },
       { name: "CANAL26", id: "BTaSHvWJW5A" },
-      { name: "CRONICA", id: "avly0uwZzOE" },
-      { name: "NACION", id: "yK3KIoNrv-c" },
-      { name: "A24", id: "ArKbAx1K-2U" }
+      { name: "CRONICA", id: "avly0uwZzOE" }
     ];
 
     // Variables globales para los reproductores de YouTube
@@ -248,178 +210,86 @@
       addEventListeners();
     }
 
-    // Agregar eventos de clic a cada capa superpuesta
-function addEventListeners() {
-  containers.forEach((container, index) => {
-    const overlay = container.querySelector('.overlay');
-    const slider = volumeSliders[index];
-    const currentPlayer = players[index];
+    // Agregar eventos de clic y doble clic
+    function addEventListeners() {
+      containers.forEach((container, index) => {
+        const overlay = container.querySelector('.overlay');
+        const slider = volumeSliders[index];
+        const currentPlayer = players[index];
 
-    // Evento de clic simple
-    overlay.addEventListener('click', () => {
-      if (container.classList.contains('active')) {
-        // Si el contenedor ya está activo, mutear el video
-        currentPlayer.mute();
-        container.classList.remove('active'); // Quitar el borde rojo
-        slider.classList.remove('visible'); // Ocultar el slider
-        slider.disabled = true; // Deshabilitar el slider
-        console.log('Video mutado:', container.dataset.videoId);
-      } else {
-        // Remover la clase 'active' de todos los contenedores
-        containers.forEach((cont) => cont.classList.remove('active'));
-        // Ocultar y deshabilitar todos los sliders
-        volumeSliders.forEach((s) => {
-          s.classList.remove('visible');
-          s.disabled = true;
-        });
-        // Silenciar todos los videos
-        players.forEach((player) => player.mute());
-
-        // Quitar el mute al video seleccionado
-        currentPlayer.unMute();
-        // Agregar la clase 'active' al contenedor seleccionado
-        container.classList.add('active'); // Mostrar el borde rojo
-        slider.classList.add('visible'); // Mostrar el slider
-        slider.disabled = false; // Habilitar el slider
-        console.log('Video activado:', container.dataset.videoId);
-      }
-    });
-
-    // Evento de doble clic
-    overlay.addEventListener('dblclick', () => {
-      // Mutear el video si está activo
-      if (container.classList.contains('active')) {
-        currentPlayer.mute();
-        container.classList.remove('active'); // Quitar el borde rojo
-        slider.classList.remove('visible'); // Ocultar el slider
-        slider.disabled = true; // Deshabilitar el slider
-        console.log('Video mutado por doble clic:', container.dataset.videoId);
-      }
-
-      // Construir la URL del video con parámetros para pantalla completa
-      const videoUrl = `https://www.youtube.com/watch?v=${container.dataset.videoId}&autoplay=1&fs=1`;
-      // Abrir el enlace del video en una ventana emergente
-      const popupWidth = 800;
-      const popupHeight = 600;
-      const left = (window.screen.width - popupWidth) / 2;
-      const top = (window.screen.height - popupHeight) / 2;
-      window.open(
-        videoUrl,
-        'VideoPopup',
-        `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
-      );
-      console.log('Enlace abierto en ventana emergente:', videoUrl);
-    });
-  });
-
-  // Agregar eventos a los controles de volumen
-  volumeSliders.forEach((slider) => {
-    const videoIndex = slider.dataset.videoIndex;
-    slider.addEventListener('input', () => {
-      const volume = slider.value / 100; // Convertir el valor del slider a un rango de 0 a 1
-      const player = players[videoIndex];
-      if (player && player.setVolume) {
-        player.setVolume(volume * 100); // Establecer el volumen del video
-        console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
-      }
-    });
-  });
-}
-
-    // Generar dinámicamente la tabla de configuración
-    function generateVideoConfigTable() {
-      const table = document.querySelector("#video-config-table");
-
-      // Crear las filas y celdas de la tabla
-      for (let i = 0; i < 2; i++) {
-        // Primera fila: nombres de los videos
-        const nameRow = document.createElement("tr");
-        for (let j = 0; j < 2; j++) {
-          const cell = document.createElement("td");
-          const select = document.createElement("select");
-          select.classList.add("video-select");
-          select.dataset.videoIndex = i * 2 + j;
-
-          // Agregar las opciones predefinidas
-          videos.forEach((video) => {
-            const option = document.createElement("option");
-            option.value = video.id;
-            option.textContent = video.name;
-            select.appendChild(option);
-          });
-
-          // Agregar la opción "USUARIO"
-          const userOption = document.createElement("option");
-          userOption.value = "";
-          userOption.textContent = "USUARIO";
-          select.appendChild(userOption);
-
-          // Añadir el ícono ⚙️ antes del select
-          cell.innerHTML = "⚙️ ";
-          cell.appendChild(select);
-          nameRow.appendChild(cell);
-        }
-        table.appendChild(nameRow);
-
-        // Segunda fila: IDs de los videos
-        const idRow = document.createElement("tr");
-        for (let j = 0; j < 2; j++) {
-          const cell = document.createElement("td");
-          const input = document.createElement("input");
-          input.type = "text";
-          input.classList.add("video-id");
-          input.readOnly = true;
-          input.value = videos[i * 2 + j].id; // Valor inicial del ID
-          cell.appendChild(input);
-          idRow.appendChild(cell);
-        }
-        table.appendChild(idRow);
-      }
-
-      // Agregar eventos a los selects
-      const videoSelects = document.querySelectorAll(".video-select");
-      const videoIds = document.querySelectorAll(".video-id");
-
-      videoSelects.forEach((select) => {
-        select.addEventListener("change", (event) => {
-          const selectedValue = event.target.value;
-          const videoIndex = event.target.dataset.videoIndex;
-          const idInput = videoIds[videoIndex];
-          const container = containers[videoIndex];
-          const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
-          const player = players[videoIndex];
-
-          if (selectedValue === "") {
-            // Si se selecciona "USUARIO", hacer el campo de ID editable
-            idInput.value = "";
-            idInput.classList.add("editable");
-            idInput.readOnly = false;
+        // Evento de clic simple
+        overlay.addEventListener('click', () => {
+          if (container.classList.contains('active')) {
+            // Si el contenedor ya está activo, mutear el video
+            currentPlayer.mute();
+            container.classList.remove('active'); // Quitar el borde rojo
+            slider.classList.remove('visible'); // Ocultar el slider
+            slider.disabled = true; // Deshabilitar el slider
+            console.log('Video mutado:', container.dataset.videoId);
           } else {
-            // Si se selecciona otro video, actualizar el ID automáticamente
-            idInput.value = selectedValue;
-            idInput.classList.remove("editable");
-            idInput.readOnly = true;
+            // Remover la clase 'active' de todos los contenedores
+            containers.forEach((cont) => cont.classList.remove('active'));
+            // Ocultar y deshabilitar todos los sliders
+            volumeSliders.forEach((s) => {
+              s.classList.remove('visible');
+              s.disabled = true;
+            });
+            // Silenciar todos los videos
+            players.forEach((player) => player.mute());
 
-            // Actualizar el atributo data-video-id del contenedor
-            container.setAttribute("data-video-id", selectedValue);
+            // Quitar el mute al video seleccionado
+            currentPlayer.unMute();
+            // Agregar la clase 'active' al contenedor seleccionado
+            container.classList.add('active'); // Mostrar el borde rojo
+            slider.classList.add('visible'); // Mostrar el slider
+            slider.disabled = false; // Habilitar el slider
+            console.log('Video activado:', container.dataset.videoId);
+          }
+        });
 
-            // Actualizar el iframe correspondiente
-            iframe.src = ` https://www.youtube.com/embed/ ${selectedValue}?autoplay=1&mute=1&controls=0&loop=1&playlist=${selectedValue}&enablejsapi=1`;
+        // Evento de doble clic
+        overlay.addEventListener('dblclick', () => {
+          // Mutear el video si está activo
+          if (container.classList.contains('active')) {
+            currentPlayer.mute();
+            container.classList.remove('active'); // Quitar el borde rojo
+            slider.classList.remove('visible'); // Ocultar el slider
+            slider.disabled = true; // Deshabilitar el slider
+            console.log('Video mutado por doble clic:', container.dataset.videoId);
+          }
 
-            // Actualizar el reproductor de YouTube correspondiente
-            if (player && player.loadVideoById) {
-              player.loadVideoById(selectedValue); // Cargar el nuevo video
-              player.mute(); // Silenciar el video
-              player.playVideo(); // Reproducir el video
-            }
+          // Construir la URL del video con parámetros para pantalla completa
+          const videoUrl = `https://www.youtube.com/watch?v=${container.dataset.videoId}&autoplay=1&fs=1`;
+          // Abrir el enlace del video en una ventana emergente
+          const popupWidth = 800;
+          const popupHeight = 600;
+          const left = (window.screen.width - popupWidth) / 2;
+          const top = (window.screen.height - popupHeight) / 2;
+          window.open(
+            videoUrl,
+            'VideoPopup',
+            `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
+          );
+          console.log('Enlace abierto en ventana emergente:', videoUrl);
+        });
+      });
+
+      // Agregar eventos a los controles de volumen
+      volumeSliders.forEach((slider) => {
+        const videoIndex = slider.dataset.videoIndex;
+        slider.addEventListener('input', () => {
+          const volume = slider.value / 100; // Convertir el valor del slider a un rango de 0 a 1
+          const player = players[videoIndex];
+          if (player && player.setVolume) {
+            player.setVolume(volume * 100); // Establecer el volumen del video
+            console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
           }
         });
       });
     }
 
-    // Llamar a las funciones para generar los contenedores y la tabla
+    // Llamar a la función para generar los contenedores
     generateVideoContainers();
-    generateVideoConfigTable();
   </script>
 </body>
 </html>
