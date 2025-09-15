@@ -298,8 +298,8 @@
 
 /* Estilo para los campos de ID */
 .video-id {
-  width: 50%; /* Ancho del cuadro de texto */
-  padding: 8px; /* Mayor padding para mejor apariencia */
+  width: 90%; /* Ancho del cuadro de texto */
+  padding: 2px; /* Mayor padding para mejor apariencia - era 8 */
   border: 1px solid #555; /* Borde más oscuro */
   border-radius: 4px; /* Bordes redondeados */
   background-color: #34495e; /* Fondo ligeramente diferente */
@@ -501,6 +501,7 @@ function generateVideoConfigTable() {
     table.appendChild(idRow);
   }
 
+  {/*  
   // Agregar eventos a los selects
   const videoSelects = document.querySelectorAll(".video-select");
   const videoIds = document.querySelectorAll(".video-id");
@@ -537,7 +538,77 @@ function generateVideoConfigTable() {
     });
   });
 }
+*/}
 
+// Agregar eventos a los selects
+const videoSelects = document.querySelectorAll(".video-select");
+const videoIds = document.querySelectorAll(".video-id");
+
+videoSelects.forEach((select) => {
+  select.addEventListener("change", (event) => {
+    const selectedValue = event.target.value;
+    const videoIndex = event.target.dataset.videoIndex;
+    const idInput = videoIds[videoIndex];
+
+    if (selectedValue === "") {
+      // Si se selecciona "USUARIO", hacer el campo de ID editable
+      idInput.value = "";
+      idInput.classList.add("editable");
+      idInput.readOnly = false;
+      // NO actualizar el video automáticamente, esperar entrada manual
+    } else {
+      // Si se selecciona otro video, actualizar el ID automáticamente
+      idInput.value = selectedValue;
+      idInput.classList.remove("editable");
+      idInput.readOnly = true;
+
+      // Actualizar el reproductor de YouTube correspondiente
+      const player = players[videoIndex];
+      if (player && player.loadVideoById) {
+        player.loadVideoById(selectedValue); // Cargar el nuevo video
+        player.mute(); // Silenciar el video
+        player.playVideo(); // Reproducir el video
+      }
+
+      // Actualizar el iframe del video correspondiente
+      const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+      iframe.src = `https://www.youtube.com/embed/${idInput.value}?autoplay=1&mute=1&controls=0&loop=1&playlist=${idInput.value}&enablejsapi=1`;
+    }
+  });
+});
+
+// Agregar evento para actualizar el video cuando se ingresa un ID manualmente
+videoIds.forEach((input) => {
+  input.addEventListener("change", (event) => {
+    if (!input.readOnly) { // Solo si el campo es editable (modo USUARIO)
+      const videoIndex = Array.from(videoIds).indexOf(input);
+      const videoId = input.value.trim();
+      
+      if (videoId) {
+        // Actualizar el reproductor de YouTube correspondiente
+        const player = players[videoIndex];
+        if (player && player.loadVideoById) {
+          player.loadVideoById(videoId); // Cargar el nuevo video
+          player.mute(); // Silenciar el video
+          player.playVideo(); // Reproducir el video
+        }
+
+        // Actualizar el iframe del video correspondiente
+        const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
+      }
+    }
+  });
+  
+  // También actualizar al presionar Enter
+  input.addEventListener("keypress", (event) => {
+    if (event.key === "Enter" && !input.readOnly) {
+      event.preventDefault();
+      input.blur(); // Quitar el foco para activar el evento change
+    }
+  });
+});
+  
 // Llamar a la función para generar la tabla
 generateVideoConfigTable();
 
@@ -661,7 +732,3 @@ generateVideoConfigTable();
   </script>
 </body>
 </html>
-
-
-
-
