@@ -416,321 +416,415 @@
   <script>
     // Variables globales para los IDs y nombres de los videos
     // Constantes actualizadas para los nombres e IDs de los videos
-const videos = [
-  { name: "C5N", id: "jTDk5CswBVk" },
-  { name: "TN", id: "cb12KmMMDJA" },
-  { name: "CANAL26", id: "BTaSHvWJW5A" },
-  { name: "CRONICA", id: "avly0uwZzOE" },
-  { name: "NACION", id: "5f__Ls4_VYQ" },
-  { name: "A24", id: "ArKbAx1K-2U" }
-];
-
-// Variables globales para los reproductores de YouTube
-let players = [];
-const containers = document.querySelectorAll('.video-container');
-const volumeSliders = document.querySelectorAll('.volume-slider');
-
-// Cargar la API de YouTube
-function onYouTubeIframeAPIReady() {
-  console.log('API de YouTube cargada correctamente.');
-  players = [
-    new YT.Player('video1', { events: { 'onReady': onPlayerReady } }),
-    new YT.Player('video2', { events: { 'onReady': onPlayerReady } }),
-    new YT.Player('video3', { events: { 'onReady': onPlayerReady } }),
-    new YT.Player('video4', { events: { 'onReady': onPlayerReady } })
-  ];
-}
-
-// Función que se ejecuta cuando los videos están listos
-function onPlayerReady(event) {
-  const player = event.target;
-  console.log('Video listo:', player.getIframe().id);
-
-  // Silenciar todos los videos al iniciar
-  player.mute();
-  player.playVideo();
-}
-
-// Generar dinámicamente la tabla de configuración
-function generateVideoConfigTable() {
-  const table = document.querySelector(".top-container table");
-
-  // Crear las filas y celdas de la tabla
-  for (let i = 0; i < 2; i++) {
-    // Primera fila: nombres de los videos
-    const nameRow = document.createElement("tr");
-    for (let j = 0; j < 2; j++) {
-      const cell = document.createElement("td");
-      const select = document.createElement("select");
-      select.classList.add("video-select");
-      select.dataset.videoIndex = i * 2 + j;
-
-      // Agregar las opciones predefinidas
-      videos.forEach((video) => {
-        const option = document.createElement("option");
-        option.value = video.id;
-        option.textContent = video.name;
-        select.appendChild(option);
-      });
-
-      // Agregar la opción "USUARIO"
-      const userOption = document.createElement("option");
-      userOption.value = "";
-      userOption.textContent = "USUARIO";
-      select.appendChild(userOption);
-
-      // Añadir el ícono ⚙️ antes del select
-      cell.innerHTML = "⚙️ ";
-      cell.appendChild(select);
-      nameRow.appendChild(cell);
-    }
-    table.appendChild(nameRow);
-
-    // Segunda fila: IDs de los videos
-    const idRow = document.createElement("tr");
-    for (let j = 0; j < 2; j++) {
-      const cell = document.createElement("td");
-      const input = document.createElement("input");
-      input.type = "text";
-      input.classList.add("video-id");
-      input.readOnly = true;
-      input.value = videos[i * 2 + j].id; // Valor inicial del ID
-      cell.appendChild(input);
-      idRow.appendChild(cell);
-    }
-    table.appendChild(idRow);
-  }
-  
-  // Agregar eventos a los selects
-  const videoSelects = document.querySelectorAll(".video-select");
-  const videoIds = document.querySelectorAll(".video-id");
-
-  videoSelects.forEach((select) => {
-    select.addEventListener("change", (event) => {
-      const selectedValue = event.target.value;
-      const videoIndex = event.target.dataset.videoIndex;
-      const idInput = videoIds[videoIndex];
-
-      if (selectedValue === "") {
-        // Si se selecciona "USUARIO", hacer el campo de ID editable
-        idInput.value = "";
-        idInput.classList.add("editable");
-        idInput.readOnly = false;
-      } else {
-        // Si se selecciona otro video, actualizar el ID automáticamente
-        idInput.value = selectedValue;
-        idInput.classList.remove("editable");
-        idInput.readOnly = true;
-
-        // Actualizar el reproductor de YouTube correspondiente
-        const player = players[videoIndex];
-        if (player && player.loadVideoById) {
-          player.loadVideoById(selectedValue); // Cargar el nuevo video
-          player.mute(); // Silenciar el video
-          player.playVideo(); // Reproducir el video
-        }
-      }
-
-      // Actualizar el iframe del video correspondiente
-      const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
-      iframe.src = `https://www.youtube.com/embed/ ${idInput.value}?autoplay=1&mute=1&controls=0&loop=1&playlist=${idInput.value}&enablejsapi=1`;
-    });
-  });
-}
-
-{/*
-// Agregar eventos a los selects
-const videoSelects = document.querySelectorAll(".video-select");
-const videoIds = document.querySelectorAll(".video-id");
-
-videoSelects.forEach((select) => {
-  select.addEventListener("change", (event) => {
-    const selectedValue = event.target.value;
-    const videoIndex = event.target.dataset.videoIndex;
-    const idInput = videoIds[videoIndex];
-
-    if (selectedValue === "") {
-      // Si se selecciona "USUARIO", hacer el campo de ID editable
-      idInput.value = "";
-      idInput.classList.add("editable");
-      idInput.readOnly = false;
-      // NO actualizar el video automáticamente, esperar entrada manual
-    } else {
-      // Si se selecciona otro video, actualizar el ID automáticamente
-      idInput.value = selectedValue;
-      idInput.classList.remove("editable");
-      idInput.readOnly = true;
-
-      // Actualizar el reproductor de YouTube correspondiente
-      const player = players[videoIndex];
-      if (player && player.loadVideoById) {
-        player.loadVideoById(selectedValue); // Cargar el nuevo video
-        player.mute(); // Silenciar el video
-        player.playVideo(); // Reproducir el video
-      }
-     }
-      // Actualizar el iframe del video correspondiente
-      const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
-      iframe.src = `https://www.youtube.com/embed/${idInput.value}?autoplay=1&mute=1&controls=0&loop=1&playlist=${idInput.value}&enablejsapi=1`;
-   
-  });
-});
-
-// Agregar evento para actualizar el video cuando se ingresa un ID manualmente
-videoIds.forEach((input) => {
-  input.addEventListener("change", (event) => {
-    if (!input.readOnly) { // Solo si el campo es editable (modo USUARIO)
-      const videoIndex = Array.from(videoIds).indexOf(input);
-      const videoId = input.value.trim();
-      
-      if (videoId) {
-        // Actualizar el reproductor de YouTube correspondiente
-        const player = players[videoIndex];
-        if (player && player.loadVideoById) {
-          player.loadVideoById(videoId); // Cargar el nuevo video
-          player.mute(); // Silenciar el video
-          player.playVideo(); // Reproducir el video
-        }
-
-        // Actualizar el iframe del video correspondiente
-        const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
-        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
-      }
-    }
-  });
-  
-  // También actualizar al presionar Enter
-  input.addEventListener("keypress", (event) => {
-    if (event.key === "Enter" && !input.readOnly) {
-      event.preventDefault();
-      input.blur(); // Quitar el foco para activar el evento change
-    }
-  });
-});
-*/}
-  
-// Llamar a la función para generar la tabla
-generateVideoConfigTable();
-
-    // Agregar eventos de clic a cada capa superpuesta
-    containers.forEach((container, index) => {
-      const overlay = container.querySelector('.overlay');
-      const videoId = container.dataset.videoId;
-      const slider = volumeSliders[index];
-
-      // Evento de clic simple
-      overlay.addEventListener('click', () => {
-        const currentPlayer = players[index];
-        // Si el contenedor ya está activo, mutear el video
-        if (container.classList.contains('active')) {
-          currentPlayer.mute();
-          container.classList.remove('active');
-          slider.classList.remove('visible'); // Ocultar el slider
-          slider.disabled = true; /* Deshabilitar el slider */
-          console.log('Video mutado:', videoId);
-        } else {
-          // Remover la clase 'active' de todos los contenedores
-          containers.forEach((cont) => {
-            cont.classList.remove('active');
-          });
-          // Ocultar y deshabilitar todos los sliders
-          volumeSliders.forEach((s) => {
-            s.classList.remove('visible');
-            s.disabled = true;
-          });
-          // Silenciar todos los videos
-          players.forEach((player) => {
-            if (player && player.mute) player.mute();
-          });
-          // Quitar el mute al video seleccionado
-          if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
-          // Agregar la clase 'active' al contenedor seleccionado
-          container.classList.add('active');
-          slider.classList.add('visible'); // Mostrar el slider
-          slider.disabled = false; /* Habilitar el slider */
-          console.log('Video activado:', videoId);
-        }
-      });
-
-      // Evento de doble clic
-      overlay.addEventListener('dblclick', () => {
-        const currentPlayer = players[index];
-        // Mutear el video si está activo
-        if (container.classList.contains('active')) {
-          currentPlayer.mute();
-          container.classList.remove('active');
-          slider.classList.remove('visible'); // Ocultar el slider
-          slider.disabled = true; /* Deshabilitar el slider */
-          console.log('Video mutado por doble clic:', videoId);
-        }
-        // Construir la URL del video con parámetros para pantalla completa
-        const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
-        // Abrir el enlace del video en una ventana emergente
-        const popupWidth = 800; /* Ancho de la ventana emergente */
-        const popupHeight = 600; /* Alto de la ventana emergente */
-        const left = (window.screen.width - popupWidth) / 2; /* Centrado horizontal */
-        const top = (window.screen.height - popupHeight) / 2; /* Centrado vertical */
-        window.open(
-          videoUrl,
-          'VideoPopup',
-          `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
-        );
-        console.log('Enlace abierto en ventana emergente:', videoUrl);
-      });
-    });
-
-    // Agregar eventos a los controles de volumen
-    volumeSliders.forEach((slider) => {
-      const videoIndex = slider.dataset.videoIndex;
-      slider.addEventListener('input', () => {
-        const volume = slider.value / 100; /* Convertir el valor del slider a un rango de 0 a 1 */
-        const player = players[videoIndex];
-        if (player && player.setVolume) {
-          player.setVolume(volume * 100); /* Establecer el volumen del video */
-          console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
-        }
-      });
-    });
-
+    const videos = [
+      { name: "C5N", id: "jTDk5CswBVk" },
+      { name: "TN", id: "cb12KmMMDJA" },
+      { name: "CANAL26", id: "BTaSHvWJW5A" },
+      { name: "CRONICA", id: "avly0uwZzOE" },
+      { name: "NACION", id: "5f__Ls4_VYQ" },
+      { name: "A24", id: "BTaSHvWJW5A" }
+    ];
+    
+    // Variables globales para los reproductores de YouTube
+    let players = [];
+    const containers = document.querySelectorAll('.video-container');
+    const volumeSliders = document.querySelectorAll('.volume-slider');
+    
     // Cargar la API de YouTube
-    const tag = document.createElement('script');
-    tag.src = " https://www.youtube.com/iframe_api ";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // Comportamiento del widget de radio
-    const radioTrigger = document.querySelector('.radio-trigger');
-    const radioContainer = document.querySelector('.radio-container');
-
-    // Alternar la visibilidad del widget inferior al hacer clic en el indicador
-    radioTrigger.addEventListener('click', () => {
-      radioContainer.classList.toggle('visible');
+    function onYouTubeIframeAPIReady() {
+      console.log('API de YouTube cargada correctamente.');
+      players = [
+        new YT.Player('video1', { events: { 'onReady': onPlayerReady } }),
+        new YT.Player('video2', { events: { 'onReady': onPlayerReady } }),
+        new YT.Player('video3', { events: { 'onReady': onPlayerReady } }),
+        new YT.Player('video4', { events: { 'onReady': onPlayerReady } })
+      ];
+    }
+    
+    // Función que se ejecuta cuando los videos están listos
+    function onPlayerReady(event) {
+      const player = event.target;
+      console.log('Video listo:', player.getIframe().id);
+    
+      // Silenciar todos los videos al iniciar
+      player.mute();
+      player.playVideo();
+    }
+    
+    // Generar dinámicamente la tabla de configuración
+    function generateVideoConfigTable() {
+      const table = document.querySelector(".top-container table");
+    
+      // Crear las filas y celdas de la tabla
+      for (let i = 0; i < 2; i++) {
+        // Primera fila: nombres de los videos
+        const nameRow = document.createElement("tr");
+        for (let j = 0; j < 2; j++) {
+          const cell = document.createElement("td");
+          const select = document.createElement("select");
+          select.classList.add("video-select");
+          select.dataset.videoIndex = i * 2 + j;
+    
+          // Agregar las opciones predefinidas
+          videos.forEach((video) => {
+            const option = document.createElement("option");
+            option.value = video.id;
+            option.textContent = video.name;
+            select.appendChild(option);
+          });
+    
+          // Agregar la opción "USUARIO"
+          const userOption = document.createElement("option");
+          userOption.value = "";
+          userOption.textContent = "USUARIO";
+          select.appendChild(userOption);
+    
+          // Añadir el ícono ⚙️ antes del select
+          cell.innerHTML = "⚙️ ";
+          cell.appendChild(select);
+          nameRow.appendChild(cell);
+        }
+        table.appendChild(nameRow);
+    
+        // Segunda fila: IDs de los videos
+        const idRow = document.createElement("tr");
+        for (let j = 0; j < 2; j++) {
+          const cell = document.createElement("td");
+          const input = document.createElement("input");
+          input.type = "text";
+          input.classList.add("video-id");
+          input.readOnly = true;
+          input.value = videos[i * 2 + j].id; // Valor inicial del ID
+          cell.appendChild(input);
+          idRow.appendChild(cell);
+        }
+        table.appendChild(idRow);
+      }
+      
+      // Agregar eventos a los selects
+      const videoSelects = document.querySelectorAll(".video-select");
+      const videoIds = document.querySelectorAll(".video-id");
+    
+      videoSelects.forEach((select) => {
+        select.addEventListener("change", (event) => {
+          const selectedValue = event.target.value;
+          const videoIndex = event.target.dataset.videoIndex;
+          const idInput = videoIds[videoIndex];
+    
+          if (selectedValue === "") {
+            // Si se selecciona "USUARIO", hacer el campo de ID editable
+            idInput.value = "";
+            idInput.classList.add("editable");
+            idInput.readOnly = false;
+          } else {
+            // Si se selecciona otro video, actualizar el ID automáticamente
+            idInput.value = selectedValue;
+            idInput.classList.remove("editable");
+            idInput.readOnly = true;
+    
+            // Actualizar el reproductor de YouTube correspondiente
+            const player = players[videoIndex];
+            if (player && player.loadVideoById) {
+              player.loadVideoById(selectedValue); // Cargar el nuevo video
+              player.mute(); // Silenciar el video
+              player.playVideo(); // Reproducir el video
+            }
+          }
+    
+          // Actualizar el iframe del video correspondiente
+          const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+          iframe.src = `https://www.youtube.com/embed/ ${idInput.value}?autoplay=1&mute=1&controls=0&loop=1&playlist=${idInput.value}&enablejsapi=1`;
+        });
+      });
+    }
+    
+    {/*
+    // Agregar eventos a los selects
+    const videoSelects = document.querySelectorAll(".video-select");
+    const videoIds = document.querySelectorAll(".video-id");
+    
+    videoSelects.forEach((select) => {
+      select.addEventListener("change", (event) => {
+        const selectedValue = event.target.value;
+        const videoIndex = event.target.dataset.videoIndex;
+        const idInput = videoIds[videoIndex];
+    
+        if (selectedValue === "") {
+          // Si se selecciona "USUARIO", hacer el campo de ID editable
+          idInput.value = "";
+          idInput.classList.add("editable");
+          idInput.readOnly = false;
+          // NO actualizar el video automáticamente, esperar entrada manual
+        } else {
+          // Si se selecciona otro video, actualizar el ID automáticamente
+          idInput.value = selectedValue;
+          idInput.classList.remove("editable");
+          idInput.readOnly = true;
+    
+          // Actualizar el reproductor de YouTube correspondiente
+          const player = players[videoIndex];
+          if (player && player.loadVideoById) {
+            player.loadVideoById(selectedValue); // Cargar el nuevo video
+            player.mute(); // Silenciar el video
+            player.playVideo(); // Reproducir el video
+          }
+        
+          // Actualizar el iframe del video correspondiente
+          const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+          iframe.src = `https://www.youtube.com/embed/${idInput.value}?autoplay=1&mute=1&controls=0&loop=1&playlist=${idInput.value}&enablejsapi=1`;
+        }
+      });
     });
+    
+    // Agregar evento para actualizar el video cuando se ingresa un ID manualmente
+    videoIds.forEach((input) => {
+      input.addEventListener("change", (event) => {
+        if (!input.readOnly) { // Solo si el campo es editable (modo USUARIO)
+          const videoIndex = Array.from(videoIds).indexOf(input);
+          const videoId = input.value.trim();
+          
+          if (videoId) {
+            // Actualizar el reproductor de YouTube correspondiente
+            const player = players[videoIndex];
+            if (player && player.loadVideoById) {
+              player.loadVideoById(videoId); // Cargar el nuevo video
+              player.mute(); // Silenciar el video
+              player.playVideo(); // Reproducir el video
+            }
+    
+            // Actualizar el iframe del video correspondiente
+            const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
+          }
+        }
+      });
+      
+      // También actualizar al presionar Enter
+      input.addEventListener("keypress", (event) => {
+        if (event.key === "Enter" && !input.readOnly) {
+          event.preventDefault();
+          input.blur(); // Quitar el foco para activar el evento change
+        }
+      });
+    });
+    
+    */}
 
-    // Ocultar el widget inferior al hacer clic fuera de él
-    document.addEventListener('click', (event) => {
-      if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
-        radioContainer.classList.remove('visible');
+    // Generar dinámicamente la tabla de configuración
+    function generateVideoConfigTable() {
+      const table = document.querySelector(".top-container table");
+  
+      // Crear las filas y celdas de la tabla
+      for (let i = 0; i < 2; i++) {
+        // Primera fila: nombres de los videos
+        const nameRow = document.createElement("tr");
+        for (let j = 0; j < 2; j++) {
+          const cell = document.createElement("td");
+          const select = document.createElement("select");
+          select.classList.add("video-select");
+          select.dataset.videoIndex = i * 2 + j;
+  
+          // Agregar las opciones predefinidas
+          videos.forEach((video) => {
+            const option = document.createElement("option");
+            option.value = video.id;
+            option.textContent = video.name;
+            select.appendChild(option);
+          });
+  
+          // Agregar la opción "USUARIO"
+          const userOption = document.createElement("option");
+          userOption.value = "";
+          userOption.textContent = "USUARIO";
+          select.appendChild(userOption);
+  
+          // Añadir el ícono ⚙️ antes del select
+          cell.innerHTML = "⚙️ ";
+          cell.appendChild(select);
+          nameRow.appendChild(cell);
+        }
+        table.appendChild(nameRow);
+  
+        // Segunda fila: IDs de los videos
+        const idRow = document.createElement("tr");
+        for (let j = 0; j < 2; j++) {
+          const cell = document.createElement("td");
+          const input = document.createElement("input");
+          input.type = "text";
+          input.classList.add("video-id");
+          input.readOnly = true;
+          input.value = videos[i * 2 + j].id; // Valor inicial del ID
+          cell.appendChild(input);
+          idRow.appendChild(cell);
+        }
+        table.appendChild(idRow);
+      }
+      
+      // Agregar eventos a los selects
+      const videoSelects = document.querySelectorAll(".video-select");
+      const videoIds = document.querySelectorAll(".video-id");
+  
+      videoSelects.forEach((select) => {
+        select.addEventListener("change", async (event) => {
+          const selectedValue = event.target.value;
+          const videoIndex = event.target.dataset.videoIndex;
+          const idInput = videoIds[videoIndex];
+  
+          if (selectedValue === "") {
+            // Si se selecciona "USUARIO", mostrar cuadro de diálogo
+            const youtubeLink = prompt("Por favor, pega el enlace de YouTube:");
+            
+            if (youtubeLink) {
+              // Extraer el ID del video del enlace
+              let videoId = extractYouTubeId(youtubeLink);
+              
+              if (videoId) {
+                idInput.value = videoId;
+                idInput.classList.remove("editable");
+                idInput.readOnly = true;
+                
+                // Actualizar el reproductor de YouTube correspondiente
+                const player = players[videoIndex];
+                if (player && player.loadVideoById) {
+                  player.loadVideoById(videoId);
+                  player.mute();
+                  player.playVideo();
+                }
+                
+                // Actualizar el iframe
+                const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
+              } else {
+                alert("El enlace de YouTube no es válido. Por favor, ingresa un enlace válido.");
+                // Restablecer la selección
+                event.target.selectedIndex = 0;
+              }
+            } else {
+              // Si el usuario cancela, restablecer la selección
+              event.target.selectedIndex = 0;
+            }
+          } else {
+            // Si se selecciona otro video, actualizar el ID automáticamente
+            idInput.value = selectedValue;
+            idInput.classList.remove("editable");
+            idInput.readOnly = true;
+  
+            // Actualizar el reproductor de YouTube correspondiente
+            const player = players[videoIndex];
+            if (player && player.loadVideoById) {
+              player.loadVideoById(selectedValue);
+              player.mute();
+              player.playVideo();
+            }
+  
+            // Actualizar el iframe del video correspondiente
+            const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+            iframe.src = `https://www.youtube.com/embed/${selectedValue}?autoplay=1&mute=1&controls=0&loop=1&playlist=${selectedValue}&enablejsapi=1`;
+          }
+        });
+      });
+    }
+  
+    // Función para extraer el ID de un enlace de YouTube
+    function extractYouTubeId(url) {
+      // Patrones comunes para URLs de YouTube
+      const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/,
+        /(?:youtube\.com\/embed\/)([^&]+)/,
+        /(?:youtube\.com\/v\/)([^&]+)/
+      ];
+      
+      for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+          return match[1];
+        }
+      }
+      
+      return null;
+    }
+    
+ 
+    // Evento de doble clic
+    overlay.addEventListener('dblclick', () => {
+      const currentPlayer = players[index];
+      // Mutear el video si está activo
+      if (container.classList.contains('active')) {
+        currentPlayer.mute();
+        container.classList.remove('active');
+        slider.classList.remove('visible'); // Ocultar el slider
+        slider.disabled = true; /* Deshabilitar el slider */
+        console.log('Video mutado por doble clic:', videoId);
+      }
+      // Construir la URL del video con parámetros para pantalla completa
+      const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
+      // Abrir el enlace del video en una ventana emergente
+      const popupWidth = 800; /* Ancho de la ventana emergente */
+      const popupHeight = 600; /* Alto de la ventana emergente */
+      const left = (window.screen.width - popupWidth) / 2; /* Centrado horizontal */
+      const top = (window.screen.height - popupHeight) / 2; /* Centrado vertical */
+      window.open(
+        videoUrl,
+        'VideoPopup',
+        `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
+      );
+      console.log('Enlace abierto en ventana emergente:', videoUrl);
+    });
+  });
+
+  // Agregar eventos a los controles de volumen
+  volumeSliders.forEach((slider) => {
+    const videoIndex = slider.dataset.videoIndex;
+    slider.addEventListener('input', () => {
+      const volume = slider.value / 100; /* Convertir el valor del slider a un rango de 0 a 1 */
+      const player = players[videoIndex];
+      if (player && player.setVolume) {
+        player.setVolume(volume * 100); /* Establecer el volumen del video */
+        console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
       }
     });
+  });
 
-    // Comportamiento del frame de la parte superior
-    const topTrigger = document.querySelector('.top-trigger');
-    const topContainer = document.querySelector('.top-container');
+  // Cargar la API de YouTube
+  const tag = document.createElement('script');
+  tag.src = " https://www.youtube.com/iframe_api ";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // Alternar la visibilidad del widget superior al hacer clic en el indicador
-    topTrigger.addEventListener('click', () => {
-      topContainer.classList.toggle('visible');
-    });
+  // Comportamiento del widget de radio
+  const radioTrigger = document.querySelector('.radio-trigger');
+  const radioContainer = document.querySelector('.radio-container');
 
-    // Ocultar el widget superior al hacer clic fuera de él
-    document.addEventListener('click', (event) => {
-      if (!topContainer.contains(event.target) && !topTrigger.contains(event.target)) {
-        topContainer.classList.remove('visible');
-      }
-    });
+  // Alternar la visibilidad del widget inferior al hacer clic en el indicador
+  radioTrigger.addEventListener('click', () => {
+    radioContainer.classList.toggle('visible');
+  });
+
+  // Ocultar el widget inferior al hacer clic fuera de él
+  document.addEventListener('click', (event) => {
+    if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
+      radioContainer.classList.remove('visible');
+    }
+  });
+
+  // Comportamiento del frame de la parte superior
+  const topTrigger = document.querySelector('.top-trigger');
+  const topContainer = document.querySelector('.top-container');
+
+  // Alternar la visibilidad del widget superior al hacer clic en el indicador
+  topTrigger.addEventListener('click', () => {
+    topContainer.classList.toggle('visible');
+  });
+
+  // Ocultar el widget superior al hacer clic fuera de él
+  document.addEventListener('click', (event) => {
+    if (!topContainer.contains(event.target) && !topTrigger.contains(event.target)) {
+      topContainer.classList.remove('visible');
+    }
+  });
   </script>
 </body>
 </html>
+
 
 
