@@ -569,11 +569,11 @@ videoSelects.forEach((select) => {
         player.mute(); // Silenciar el video
         player.playVideo(); // Reproducir el video
       }
-
+     }
       // Actualizar el iframe del video correspondiente
       const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
       iframe.src = `https://www.youtube.com/embed/${idInput.value}?autoplay=1&mute=1&controls=0&loop=1&playlist=${idInput.value}&enablejsapi=1`;
-    }
+   
   });
 });
 
@@ -732,3 +732,4 @@ generateVideoConfigTable();
   </script>
 </body>
 </html>
+
