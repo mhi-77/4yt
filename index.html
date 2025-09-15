@@ -414,6 +414,7 @@
   </div>
 
   <script>
+    // CONFIGURACIÓN PRINCIPAL - Solo modificar esta sección
     // Variables globales para los IDs y nombres de los videos
     const videos = [
       { name: "C5N", id: "jTDk5CswBVk" },
@@ -422,7 +423,11 @@
       { name: "CRONICA", id: "avly0uwZzOE" },
       { name: "NACION", id: "5f__Ls4_VYQ" },
       { name: "A24", id: "BTaSHvWJW5A" }
+      // Agregar más videos aquí si es necesario
     ];
+    
+    // Número de reproductores de video (modificar si se cambia la estructura HTML)
+    const NUMBER_OF_PLAYERS = 4;
     
     // Variables globales para los reproductores de YouTube
     let players = [];
@@ -432,12 +437,22 @@
     // Cargar la API de YouTube
     function onYouTubeIframeAPIReady() {
       console.log('API de YouTube cargada correctamente.');
-      players = [
-        new YT.Player('video1', { events: { 'onReady': onPlayerReady } }),
-        new YT.Player('video2', { events: { 'onReady': onPlayerReady } }),
-        new YT.Player('video3', { events: { 'onReady': onPlayerReady } }),
-        new YT.Player('video4', { events: { 'onReady': onPlayerReady } })
-      ];
+      
+      // Inicializar solo los primeros NUMBER_OF_PLAYERS videos
+      players = [];
+      for (let i = 1; i <= NUMBER_OF_PLAYERS; i++) {
+        if (i <= videos.length) {
+          players.push(new YT.Player(`video${i}`, { 
+            videoId: videos[i-1].id,
+            events: { 'onReady': onPlayerReady }
+          }));
+        } else {
+          // Si no hay suficientes videos en la configuración, crear un player vacío
+          players.push(new YT.Player(`video${i}`, { 
+            events: { 'onReady': onPlayerReady }
+          }));
+        }
+      }
     }
     
     // Función que se ejecuta cuando los videos están listos
@@ -472,6 +487,7 @@
     // Generar dinámicamente la tabla de configuración
     function generateVideoConfigTable() {
       const table = document.querySelector(".top-container table");
+      table.innerHTML = ''; // Limpiar tabla existente
     
       // Crear las filas y celdas de la tabla
       for (let i = 0; i < 2; i++) {
@@ -483,7 +499,7 @@
           select.classList.add("video-select");
           select.dataset.videoIndex = i * 2 + j;
     
-          // Agregar las opciones predefinidas
+          // Agregar las opciones predefinidas desde el array videos
           videos.forEach((video) => {
             const option = document.createElement("option");
             option.value = video.id;
@@ -512,7 +528,11 @@
           input.type = "text";
           input.classList.add("video-id");
           input.readOnly = true;
-          input.value = videos[i * 2 + j].id; // Valor inicial del ID
+          
+          // Asignar el ID correspondiente o vacío si no existe
+          const videoIndex = i * 2 + j;
+          input.value = videoIndex < videos.length ? videos[videoIndex].id : "";
+          
           cell.appendChild(input);
           idRow.appendChild(cell);
         }
@@ -524,6 +544,12 @@
       const videoIds = document.querySelectorAll(".video-id");
     
       videoSelects.forEach((select) => {
+        // Establecer la opción seleccionada por defecto
+        const videoIndex = select.dataset.videoIndex;
+        if (videoIndex < videos.length) {
+          select.value = videos[videoIndex].id;
+        }
+        
         select.addEventListener("change", (event) => {
           const selectedValue = event.target.value;
           const videoIndex = event.target.dataset.videoIndex;
@@ -556,11 +582,11 @@
               } else {
                 alert("El enlace de YouTube no es válido. Por favor, ingresa un enlace válido.");
                 // Restablecer la selección
-                event.target.selectedIndex = 0;
+                event.target.value = idInput.value || "";
               }
             } else {
               // Si el usuario cancela, restablecer la selección
-              event.target.selectedIndex = 0;
+              event.target.value = idInput.value || "";
             }
           } else {
             // Si se selecciona otro video, actualizar el ID automáticamente
@@ -587,6 +613,7 @@
     // Llamar a la función para generar la tabla
     generateVideoConfigTable();
 
+    // El resto del código permanece igual...
     // Agregar eventos de clic a cada capa superpuesta
     containers.forEach((container, index) => {
       const overlay = container.querySelector('.overlay');
@@ -600,8 +627,8 @@
         if (container.classList.contains('active')) {
           currentPlayer.mute();
           container.classList.remove('active');
-          slider.classList.remove('visible'); // Ocultar el slider
-          slider.disabled = true; /* Deshabilitar el slider */
+          slider.classList.remove('visible');
+          slider.disabled = true;
           console.log('Video mutado:', videoId);
         } else {
           // Remover la clase 'active' de todos los contenedores
@@ -621,8 +648,8 @@
           if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
           // Agregar la clase 'active' al contenedor seleccionado
           container.classList.add('active');
-          slider.classList.add('visible'); // Mostrar el slider
-          slider.disabled = false; /* Habilitar el slider */
+          slider.classList.add('visible');
+          slider.disabled = false;
           console.log('Video activado:', videoId);
         }
       });
@@ -634,17 +661,17 @@
         if (container.classList.contains('active')) {
           currentPlayer.mute();
           container.classList.remove('active');
-          slider.classList.remove('visible'); // Ocultar el slider
-          slider.disabled = true; /* Deshabilitar el slider */
+          slider.classList.remove('visible');
+          slider.disabled = true;
           console.log('Video mutado por doble clic:', videoId);
         }
         // Construir la URL del video con parámetros para pantalla completa
         const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
         // Abrir el enlace del video en una ventana emergente
-        const popupWidth = 800; /* Ancho de la ventana emergente */
-        const popupHeight = 600; /* Alto de la ventana emergente */
-        const left = (window.screen.width - popupWidth) / 2; /* Centrado horizontal */
-        const top = (window.screen.height - popupHeight) / 2; /* Centrado vertical */
+        const popupWidth = 800;
+        const popupHeight = 600;
+        const left = (window.screen.width - popupWidth) / 2;
+        const top = (window.screen.height - popupHeight) / 2;
         window.open(
           videoUrl,
           'VideoPopup',
@@ -658,10 +685,10 @@
     volumeSliders.forEach((slider) => {
       const videoIndex = slider.dataset.videoIndex;
       slider.addEventListener('input', () => {
-        const volume = slider.value / 100; /* Convertir el valor del slider a un rango de 0 a 1 */
+        const volume = slider.value / 100;
         const player = players[videoIndex];
         if (player && player.setVolume) {
-          player.setVolume(volume * 100); /* Establecer el volumen del video */
+          player.setVolume(volume * 100);
           console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
         }
       });
@@ -669,7 +696,7 @@
     
     // Cargar la API de YouTube
     const tag = document.createElement('script');
-    tag.src = " https://www.youtube.com/iframe_api ";
+    tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     
@@ -707,6 +734,7 @@
 </script>
 </body>
 </html>
+
 
 
 
