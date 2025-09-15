@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Página con Videos Divididos</title>
+  <title>Monitor de Videos</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="32x32">
   <style>
     body, html {
@@ -327,67 +327,9 @@
 <body>
   <!-- Contenedor de los videos -->
   <div class="container">
-    <!-- Video 1 -->
-    <div class="video-wrapper">
-      <div class="video-container" data-video-id="jTDk5CswBVk">
-        <iframe 
-          id="video1" 
-          src="https://www.youtube.com/embed/jTDk5CswBVk?autoplay=1&mute=1&controls=0&loop=1&playlist=jTDk5CswBVk&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
-        <div class="overlay"></div> <!-- Capa superpuesta -->
-      </div>
-      <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="0" disabled>
-    </div>
-
-    <!-- Video 2 -->
-    <div class="video-wrapper">
-      <div class="video-container" data-video-id="cb12KmMMDJA">
-        <iframe 
-          id="video2" 
-          src=" https://www.youtube.com/embed/cb12KmMMDJA?autoplay=1&mute=1&controls=0&loop=1&playlist=cb12KmMMDJA&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
-        <div class="overlay"></div> <!-- Capa superpuesta -->
-      </div>
-      <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="1" disabled>
-    </div>
-
-    <!-- Video 3 -->
-    <div class="video-wrapper">
-      <div class="video-container" data-video-id="BTaSHvWJW5A">
-        <iframe 
-          id="video3" 
-          src=" https://www.youtube.com/embed/BTaSHvWJW5A?autoplay=1&mute=1&controls=0&loop=1&playlist=BTaSHvWJW5A&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
-        <div class="overlay"></div> <!-- Capa superpuesta -->
-      </div>
-      <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="2" disabled>
-    </div>
-
-    <!-- Video 4 -->
-    <div class="video-wrapper">
-      <div class="video-container" data-video-id="avly0uwZzOE">
-        <iframe 
-          id="video4" 
-          src=" https://www.youtube.com/embed/avly0uwZzOE?autoplay=1&mute=1&controls=0&loop=1&playlist=avly0uwZzOE&enablejsapi=1" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
-        <div class="overlay"></div> <!-- Capa superpuesta -->
-      </div>
-      <input type="range" class="volume-slider" min="0" max="100" value="100" data-video-index="3" disabled>
-    </div>
+    <!-- Los videos se generarán dinámicamente con JavaScript -->
   </div>
-
+  
   <!-- Indicador para activar el widget superior -->
   <div class="top-trigger">⚙️</div>
 
@@ -438,8 +380,154 @@
     
     // Variables globales para los reproductores de YouTube
     let players = [];
-    const containers = document.querySelectorAll('.video-container');
-    const volumeSliders = document.querySelectorAll('.volume-slider');
+    let containers = [];
+    let volumeSliders = [];
+
+    // ********** NUEVA FUNCIÓN: Generar dinámicamente los contenedores de video **********
+    /**
+     * Genera dinámicamente la estructura HTML de los videos basándose en el array 'videos'
+     * Elimina la necesidad de tener valores estáticos en el HTML
+     */
+    function initializeVideoContainers() {
+      const container = document.querySelector('.container');
+      container.innerHTML = ''; // Limpiar contenedor existente
+      
+      // Generar los contenedores de video dinámicamente
+      for (let i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        const videoId = i < videos.length ? videos[i].id : '';
+        
+        const videoWrapper = document.createElement('div');
+        videoWrapper.className = 'video-wrapper';
+        
+        const videoContainer = document.createElement('div');
+        videoContainer.className = 'video-container';
+        videoContainer.dataset.videoIndex = i;
+        if (videoId) {
+          videoContainer.dataset.videoId = videoId;
+        }
+        
+        const iframe = document.createElement('iframe');
+        iframe.id = `video${i+1}`;
+        if (videoId) {
+          iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
+        }
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.className = 'volume-slider';
+        slider.min = '0';
+        slider.max = '100';
+        slider.value = '100';
+        slider.dataset.videoIndex = i;
+        slider.disabled = true;
+        
+        videoContainer.appendChild(iframe);
+        videoContainer.appendChild(overlay);
+        videoWrapper.appendChild(videoContainer);
+        videoWrapper.appendChild(slider);
+        container.appendChild(videoWrapper);
+      }
+      
+      // Actualizar las referencias a los elementos recién creados
+      containers = document.querySelectorAll('.video-container');
+      volumeSliders = document.querySelectorAll('.volume-slider');
+      
+      // Configurar los event listeners para los nuevos elementos
+      setupEventListeners();
+    }
+    
+    // ********** NUEVA FUNCIÓN: Configurar event listeners para los contenedores **********
+    /**
+     * Configura todos los event listeners para los elementos de video
+     * Se llama después de generar dinámicamente los contenedores
+     */
+    function setupEventListeners() {
+      // Agregar eventos de clic a cada capa superpuesta
+      containers.forEach((container, index) => {
+        const overlay = container.querySelector('.overlay');
+        const videoId = container.dataset.videoId;
+        const slider = volumeSliders[index];
+        
+        // Evento de clic simple
+        overlay.addEventListener('click', () => {
+          const currentPlayer = players[index];
+          // Si el contenedor ya está activo, mutear el video
+          if (container.classList.contains('active')) {
+            currentPlayer.mute();
+            container.classList.remove('active');
+            slider.classList.remove('visible');
+            slider.disabled = true;
+            console.log('Video mutado:', videoId);
+          } else {
+            // Remover la clase 'active' de todos los contenedores
+            containers.forEach((cont) => {
+              cont.classList.remove('active');
+            });
+            // Ocultar y deshabilitar todos los sliders
+            volumeSliders.forEach((s) => {
+              s.classList.remove('visible');
+              s.disabled = true;
+            });
+            // Silenciar todos los videos
+            players.forEach((player) => {
+              if (player && player.mute) player.mute();
+            });
+            // Quitar el mute al video seleccionado
+            if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
+            // Agregar la clase 'active' al contenedor seleccionado
+            container.classList.add('active');
+            slider.classList.add('visible');
+            slider.disabled = false;
+            console.log('Video activado:', videoId);
+          }
+        });
+        
+        // Evento de doble clic
+        overlay.addEventListener('dblclick', () => {
+          const currentPlayer = players[index];
+          // Mutear el video si está activo
+          if (container.classList.contains('active')) {
+            currentPlayer.mute();
+            container.classList.remove('active');
+            slider.classList.remove('visible');
+            slider.disabled = true;
+            console.log('Video mutado por doble clic:', videoId);
+          }
+          // Construir la URL del video con parámetros para pantalla completa
+          const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
+          // Abrir el enlace del video en una ventana emergente
+          const popupWidth = 800;
+          const popupHeight = 600;
+          const left = (window.screen.width - popupWidth) / 2;
+          const top = (window.screen.height - popupHeight) / 2;
+          window.open(
+            videoUrl,
+            'VideoPopup',
+            `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
+          );
+          console.log('Enlace abierto en ventana emergente:', videoUrl);
+        });
+      });
+      
+      // Agregar eventos a los controles de volumen
+      volumeSliders.forEach((slider) => {
+        const videoIndex = slider.dataset.videoIndex;
+        slider.addEventListener('input', () => {
+          const volume = slider.value / 100;
+          const player = players[videoIndex];
+          if (player && player.setVolume) {
+            player.setVolume(volume * 100);
+            console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
+          }
+        });
+      });
+    }
     
     // Cargar la API de YouTube
     function onYouTubeIframeAPIReady() {
@@ -586,6 +674,12 @@
                 // Actualizar el iframe
                 const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
+                
+                // Actualizar el data-video-id del contenedor para el doble clic
+                const container = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
+                if (container) {
+                  container.dataset.videoId = videoId;
+                }
               } else {
                 alert("El enlace de YouTube no es válido. Por favor, ingresa un enlace válido.");
                 // Restablecer la selección
@@ -612,134 +706,72 @@
             // Actualizar el iframe del video correspondiente
             const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
             iframe.src = `https://www.youtube.com/embed/${selectedValue}?autoplay=1&mute=1&controls=0&loop=1&playlist=${selectedValue}&enablejsapi=1`;
+            
+            // Actualizar el data-video-id del contenedor para el doble clic
+            const container = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
+            if (container) {
+              container.dataset.videoId = selectedValue;
+            }
           }
         });
       });
     }
     
-    // Llamar a la función para generar la tabla
-    generateVideoConfigTable();
-
-    // Agregar eventos de clic a cada capa superpuesta
-    containers.forEach((container, index) => {
-      const overlay = container.querySelector('.overlay');
-      const videoId = container.dataset.videoId;
-      const slider = volumeSliders[index];
-    
-      // Evento de clic simple
-      overlay.addEventListener('click', () => {
-        const currentPlayer = players[index];
-        // Si el contenedor ya está activo, mutear el video
-        if (container.classList.contains('active')) {
-          currentPlayer.mute();
-          container.classList.remove('active');
-          slider.classList.remove('visible');
-          slider.disabled = true;
-          console.log('Video mutado:', videoId);
-        } else {
-          // Remover la clase 'active' de todos los contenedores
-          containers.forEach((cont) => {
-            cont.classList.remove('active');
-          });
-          // Ocultar y deshabilitar todos los sliders
-          volumeSliders.forEach((s) => {
-            s.classList.remove('visible');
-            s.disabled = true;
-          });
-          // Silenciar todos los videos
-          players.forEach((player) => {
-            if (player && player.mute) player.mute();
-          });
-          // Quitar el mute al video seleccionado
-          if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
-          // Agregar la clase 'active' al contenedor seleccionado
-          container.classList.add('active');
-          slider.classList.add('visible');
-          slider.disabled = false;
-          console.log('Video activado:', videoId);
+    // ********** NUEVA FUNCIÓN: Inicializar toda la página **********
+    /**
+     * Función principal que inicializa todos los componentes de la página
+     * Se ejecuta cuando el DOM está completamente cargado
+     */
+    function initializePage() {
+      // Generar dinámicamente los contenedores de video
+      initializeVideoContainers();
+      
+      // Generar la tabla de configuración
+      generateVideoConfigTable();
+      
+      // Cargar la API de YouTube
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      
+      // Configurar los event listeners para los widgets (radio y configuración)
+      const radioTrigger = document.querySelector('.radio-trigger');
+      const radioContainer = document.querySelector('.radio-container');
+      const topTrigger = document.querySelector('.top-trigger');
+      const topContainer = document.querySelector('.top-container');
+      
+      radioTrigger.addEventListener('click', () => {
+        radioContainer.classList.toggle('visible');
+      });
+      
+      document.addEventListener('click', (event) => {
+        if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
+          radioContainer.classList.remove('visible');
         }
       });
-    
-      // Evento de doble clic
-      overlay.addEventListener('dblclick', () => {
-        const currentPlayer = players[index];
-        // Mutear el video si está activo
-        if (container.classList.contains('active')) {
-          currentPlayer.mute();
-          container.classList.remove('active');
-          slider.classList.remove('visible');
-          slider.disabled = true;
-          console.log('Video mutado por doble clic:', videoId);
-        }
-        // Construir la URL del video con parámetros para pantalla completa
-        const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
-        // Abrir el enlace del video en una ventana emergente
-        const popupWidth = 800;
-        const popupHeight = 600;
-        const left = (window.screen.width - popupWidth) / 2;
-        const top = (window.screen.height - popupHeight) / 2;
-        window.open(
-          videoUrl,
-          'VideoPopup',
-          `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
-        );
-        console.log('Enlace abierto en ventana emergente:', videoUrl);
+      
+      topTrigger.addEventListener('click', () => {
+        topContainer.classList.toggle('visible');
       });
-    });
-    
-    // Agregar eventos a los controles de volumen
-    volumeSliders.forEach((slider) => {
-      const videoIndex = slider.dataset.videoIndex;
-      slider.addEventListener('input', () => {
-        const volume = slider.value / 100;
-        const player = players[videoIndex];
-        if (player && player.setVolume) {
-          player.setVolume(volume * 100);
-          console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
+      
+      document.addEventListener('click', (event) => {
+        if (!topContainer.contains(event.target) && !topTrigger.contains(event.target)) {
+          topContainer.classList.remove('visible');
         }
       });
-    });
+    }
     
-    // Cargar la API de YouTube
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    
-    // Comportamiento del widget de radio
-    const radioTrigger = document.querySelector('.radio-trigger');
-    const radioContainer = document.querySelector('.radio-container');
-    
-    // Alternar la visibilidad del widget inferior al hacer clic en el indicador
-    radioTrigger.addEventListener('click', () => {
-      radioContainer.classList.toggle('visible');
-    });
-    
-    // Ocultar el widget inferior al hacer clic fuera de él
-    document.addEventListener('click', (event) => {
-      if (!radioContainer.contains(event.target) && !radioTrigger.contains(event.target)) {
-        radioContainer.classList.remove('visible');
-      }
-    });
-    
-    // Comportamiento del frame de la parte superior
-    const topTrigger = document.querySelector('.top-trigger');
-    const topContainer = document.querySelector('.top-container');
-    
-    // Alternar la visibilidad del widget superior al hacer clic en el indicador
-    topTrigger.addEventListener('click', () => {
-      topContainer.classList.toggle('visible');
-    });
-    
-    // Ocultar el widget superior al hacer clic fuera de él
-    document.addEventListener('click', (event) => {
-      if (!topContainer.contains(event.target) && !topTrigger.contains(event.target)) {
-        topContainer.classList.remove('visible');
-      }
-    });
+    // Iniciar la página cuando el DOM esté completamente cargado
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializePage);
+    } else {
+      initializePage();
+    }
 </script>
 </body>
 </html>
+
 
 
 
