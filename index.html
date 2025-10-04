@@ -376,7 +376,8 @@
       { name: "RADIO-MITRE", id: "ybXIVVg6epw", type: "youtube" },
       { name: "RADIO-LA.RED", id: "9XHmu_TXck0", type: "youtube" },
       { name: "URBANA.PLAY-FM", id: "eyo4p5HUOsY", type: "youtube" },
-      { name: "STREAM-HLS", id: "http://190.103.192.6:8080/hls/mystreamkey.m3u8", type: "hls" }
+      { name: "STREAM-LOCAL", id: "http://190.103.192.6:8080/hls/mystreamkey.m3u8", type: "hls" },
+      { name: "STREAM-TEST", id: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", type: "hls" }
     ];
     
     const NUMBER_OF_PLAYERS = 4;
@@ -764,17 +765,47 @@
           if (hlsInstances[videoIndex]) {
             hlsInstances[videoIndex].destroy();
           }
-          const hls = new Hls();
+          const hls = new Hls({
+            debug: true,
+            enableWorker: true,
+            lowLatencyMode: true,
+          });
+          
+          hls.on(Hls.Events.ERROR, function (event, data) {
+            console.error('Error HLS en video', videoIndex, ':', data);
+            if (data.fatal) {
+              switch (data.type) {
+                case Hls.ErrorTypes.NETWORK_ERROR:
+                  console.error('Error de red, intentando recuperar...');
+                  hls.startLoad();
+                  break;
+                case Hls.ErrorTypes.MEDIA_ERROR:
+                  console.error('Error de medios, intentando recuperar...');
+                  hls.recoverMediaError();
+                  break;
+                default:
+                  console.error('Error fatal no recuperable');
+                  hls.destroy();
+                  break;
+              }
+            }
+          });
+          
           hls.loadSource(videoId);
           hls.attachMedia(videoElement);
           hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            console.log('Stream HLS cargado correctamente');
             videoElement.play().catch(e => console.log('Autoplay bloqueado:', e));
           });
           hlsInstances[videoIndex] = hls;
         } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
           videoElement.src = videoId;
           videoElement.addEventListener('loadedmetadata', function() {
+            console.log('Stream HLS cargado (Safari nativo)');
             videoElement.play().catch(e => console.log('Autoplay bloqueado:', e));
+          });
+          videoElement.addEventListener('error', function(e) {
+            console.error('Error cargando stream:', e);
           });
         }
         
@@ -865,7 +896,6 @@
   </script>
 </body>
 </html>
-
 
 
 
