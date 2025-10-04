@@ -387,8 +387,7 @@
       { name: "RADIO-MITRE", id: "ybXIVVg6epw", type: "youtube" },
       { name: "RADIO-LA.RED", id: "9XHmu_TXck0", type: "youtube" },
       { name: "URBANA.PLAY-FM", id: "eyo4p5HUOsY", type: "youtube" },
-      { name: "STREAM-LOCAL", id: "http://190.103.192.6:8080/hls/mystreamkey.m3u8", type: "hls" },
-      { name: "STREAM-TEST", id: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", type: "hls" }
+      { name: "CELTTV", id: "http://www.celttv.com.ar/index.php/tv-vivo-hd/", type: "iframe" }
     ];
     
     const NUMBER_OF_PLAYERS = 4;
@@ -441,6 +440,19 @@
           videoElement.setAttribute('webkit-playsinline', '');
           
           videoContainer.appendChild(videoElement);
+        } else if (videoType === 'iframe') {
+          // Para páginas web externas (como CELTTV), crear un iframe normal
+          const iframe = document.createElement('iframe');
+          iframe.id = `video${i+1}`;
+          if (videoId) {
+            iframe.src = videoId;
+          }
+          iframe.setAttribute('frameborder', '0');
+          iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+          iframe.setAttribute('allowfullscreen', '');
+          iframe.style.pointerEvents = 'auto'; // Permitir interacción con el iframe
+          
+          videoContainer.appendChild(iframe);
         } else {
           // Para YouTube, crear un iframe
           const iframe = document.createElement('iframe');
@@ -486,6 +498,24 @@
         const slider = volumeSliders[index];
         
         overlay.addEventListener('click', () => {
+          // Para iframes externos, no manejar audio (tiene sus propios controles)
+          if (videoType === 'iframe') {
+            if (container.classList.contains('active')) {
+              container.classList.remove('active');
+              slider.classList.remove('visible');
+              slider.disabled = true;
+            } else {
+              containers.forEach((cont) => cont.classList.remove('active'));
+              volumeSliders.forEach((s) => {
+                s.classList.remove('visible');
+                s.disabled = true;
+              });
+              container.classList.add('active');
+              // No mostrar slider para iframes externos
+            }
+            return;
+          }
+          
           if (container.classList.contains('active')) {
             // Mutear según el tipo
             if (videoType === 'hls') {
@@ -512,7 +542,7 @@
               if (type === 'hls') {
                 const vid = cont.querySelector('video');
                 if (vid) vid.muted = true;
-              } else {
+              } else if (type === 'youtube') {
                 if (players[idx] && players[idx].mute) players[idx].mute();
               }
             });
@@ -537,7 +567,7 @@
             if (videoType === 'hls') {
               const videoElement = container.querySelector('video');
               if (videoElement) videoElement.muted = true;
-            } else {
+            } else if (videoType === 'youtube') {
               const currentPlayer = players[index];
               if (currentPlayer) currentPlayer.mute();
             }
@@ -546,7 +576,7 @@
             slider.disabled = true;
           }
           
-          // Abrir en ventana emergente
+          // Abrir en ventana emergente solo para YouTube
           if (videoType === 'youtube') {
             const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
             const popupWidth = 800;
@@ -554,6 +584,9 @@
             const left = (window.screen.width - popupWidth) / 2;
             const top = (window.screen.height - popupHeight) / 2;
             window.open(videoUrl, 'VideoPopup', `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`);
+          } else if (videoType === 'iframe') {
+            // Para iframes externos, abrir la URL original
+            window.open(videoId, 'VideoPopup', 'width=1024,height=768,resizable=yes');
           }
         });
       });
@@ -842,6 +875,24 @@
         }
         
         players[videoIndex] = null;
+      } else if (videoType === 'iframe') {
+        // Crear iframe para páginas externas
+        const iframe = document.createElement('iframe');
+        iframe.id = `video${parseInt(videoIndex) + 1}`;
+        iframe.src = videoId;
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.style.pointerEvents = 'auto';
+        
+        container.insertBefore(iframe, overlay);
+        
+        // No necesita player API
+        if (hlsInstances[videoIndex]) {
+          hlsInstances[videoIndex].destroy();
+          hlsInstances[videoIndex] = null;
+        }
+        players[videoIndex] = null;
       } else {
         // Crear iframe para YouTube
         const iframe = document.createElement('iframe');
@@ -928,7 +979,6 @@
   </script>
 </body>
 </html>
-
 
 
 
