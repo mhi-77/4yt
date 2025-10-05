@@ -451,12 +451,12 @@
       // Agregar eventos de clic a cada capa superpuesta
       containers.forEach((container, index) => {
         const overlay = container.querySelector('.overlay');
-        const videoId = container.dataset.videoId;
         const slider = volumeSliders[index];
         
         // Evento de clic simple
         overlay.addEventListener('click', () => {
           const currentPlayer = players[index];
+          const videoId = container.dataset.videoId;
           // Si el contenedor ya está activo, mutear el video
           if (container.classList.contains('active')) {
             currentPlayer.mute();
@@ -491,16 +491,19 @@
         // Evento de doble clic
         overlay.addEventListener('dblclick', () => {
           const currentPlayer = players[index];
+          // Obtener el videoId actual del contenedor (puede haber cambiado)
+          const currentVideoId = container.dataset.videoId;
+          
           // Mutear el video si está activo
           if (container.classList.contains('active')) {
             currentPlayer.mute();
             container.classList.remove('active');
             slider.classList.remove('visible');
             slider.disabled = true;
-            console.log('Video mutado por doble clic:', videoId);
+            console.log('Video mutado por doble clic:', currentVideoId);
           }
           // Construir la URL del video con parámetros para pantalla completa
-          const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
+          const videoUrl = `https://www.youtube.com/watch?v=${currentVideoId}&autoplay=1&fs=1`;
           // Abrir el enlace del video en una ventana emergente
           const popupWidth = 800;
           const popupHeight = 600;
