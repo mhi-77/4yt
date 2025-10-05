@@ -15,41 +15,42 @@
 
     .container {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      gap: 2px;
-      height: 100vh;
-      background-color: black;
+      grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+      grid-template-rows: repeat(2, 1fr); /* Dos filas */
+      gap: 2px; /* Espacio entre los cuadrantes */
+      height: 100vh; /* Altura total de la pantalla */
+      background-color: black; /* Fondo negro para la cuadrícula */
     }
 
     .video-wrapper {
       position: relative;
       width: 100%;
       height: 100%;
-      display: flex;
-      align-items: center;
+      display: flex; /* Contenedor flexible para alinear el video y el slider */
+      align-items: center; /* Centrar verticalmente */
     }
 
+    /* Ajuste de posición para los sliders */
     .video-wrapper:nth-child(odd) {
-      flex-direction: row-reverse;
+      flex-direction: row-reverse; /* Sliders a la izquierda para videos 1 y 3 */
     }
 
     .video-wrapper:nth-child(even) {
-      flex-direction: row;
+      flex-direction: row; /* Sliders a la derecha para videos 2 y 4 */
     }
 
     .video-container {
       position: relative;
-      width: calc(100% - 20px);
+      width: calc(100% - 20px); /* Dejar espacio para el slider */
       height: 100%;
       overflow: hidden;
-      border: 7px solid black;
-      box-sizing: border-box;
-      transition: all 0.3s ease;
+      border: 7px solid black; /* Borde negro inicial */
+      box-sizing: border-box; /* Incluir el borde en el cálculo del tamaño */
+      transition: all 0.3s ease; /* Animación suave para cambios visuales */
     }
 
     .video-container.active {
-      border: 7px solid red;
+      border: 7px solid red; /* Borde rojo más grueso para el video activo */
     }
 
     iframe {
@@ -59,18 +60,7 @@
       transform: translate(-50%, -50%);
       width: 100%;
       height: 100%;
-      pointer-events: none;
-    }
-
-    video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
+      pointer-events: none; /* Desactivar interacciones directas con el iframe */
     }
 
     .overlay {
@@ -79,291 +69,284 @@
       left: 0;
       width: 100%;
       height: 100%;
-      cursor: pointer;
-      background: rgba(0, 0, 0, 0);
+      cursor: pointer; /* Indica que es interactivo */
+      background: rgba(0, 0, 0, 0); /* Capa transparente */
     }
 
+    /* Cambiar el color del slider */
     .volume-slider {
-      width: 80px;
-      height: 4px;
-      background: #333;
+      width: 80px; /* Ancho del slider */
+      height: 4px; /* Altura igual al contenedor */
+      background: #333; /* Color de fondo del slider */
       outline: none;
-      writing-mode: bt-lr;
-      direction: rtl;
-      transform: rotate(90deg);
-      margin: 0 1px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      writing-mode: bt-lr; /* Forzar orientación vertical */
+      direction: rtl; /* Invertir la dirección para que el valor máximo esté arriba */
+      transform: rotate(90deg); /* Rotar el slider para que funcione correctamente */
+      margin: 0 1px; /* Espacio entre el video y el slider */
+      opacity: 0; /* Inicialmente invisible */
+      transition: opacity 0.3s ease; /* Animación suave */
     }
 
     .volume-slider.visible {
-      opacity: 1;
+      opacity: 1; /* Hacer visible el slider */
     }
 
+    /* Estilo del thumb en navegadores basados en WebKit */
     .volume-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
+      -webkit-appearance: none; /* Personalizar el "pulgar" o "thumb" del slider */
       appearance: none;
       width: 15px;
       height: 15px;
-      background: red;
+      background: red; /* Color del pulgar */
       border-radius: 50%;
       cursor: pointer;
     }
 
+    /* Estilo del thumb en Firefox */
     .volume-slider::-moz-range-thumb {
       width: 15px;
       height: 15px;
-      background: red;
+      background: red; /* Color del pulgar o thumb para Firefox */
       border-radius: 50%;
       cursor: pointer;
     }
 
-    /* Aviso de volumen para la radio */
-    .radio-volume-warning {
-      position: fixed;
-      bottom: 175px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 100, 0, 0.95);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      z-index: 1002;
-      display: none;
-      text-align: center;
-      font-size: 14px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      animation: fadeInOut 8s ease-in-out forwards;
-    }
-
-    .radio-volume-warning.visible {
-      display: block;
-    }
-
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-      10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-    }
-
-    .radio-volume-warning::before {
-      content: "🔊";
-      font-size: 20px;
-      margin-right: 8px;
-    }
-
+    /* Contenedor del reproductor de radio (inferior) */
     .radio-container {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 165px;
-      background-color: black;
-      z-index: 1000;
+      height: 165px; /* Altura restaurada a 165px */
+      background-color: black; /* Fondo oscuro para coincidir con el diseño */
+      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
       display: flex;
-      justify-content: center;
-      align-items: center;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
+      justify-content: center; /* Centrar horizontalmente el iframe */
+      align-items: center; /* Centrar verticalmente el iframe */
+      transform: translateY(100%); /* Ocultar el widget por defecto */
+      transition: transform 0.3s ease; /* Animación suave */
     }
-    
     .radio-container iframe {
-      width: 100%;
-      height: 165px;
+      width: 100%; /* Mantener el ancho completo */
+      height: 165px; /* Altura ajustada para el iframe */
       border: none;
-      pointer-events: auto;
+      pointer-events: auto; /* Habilitar interacciones */
     }
-    
+    /* Botón/indicador para activar el widget */
     .radio-trigger {
       position: fixed;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 50px;
-      height: 30px;
-      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8));
-      border-radius: 15px 15px 0 0;
+      width: 50px; /* Ancho del contenedor */
+      height: 30px; /* Altura del contenedor */
+      background: linear-gradient(to bottom, rgba(255, 165, 0, 0.8), rgba(255, 70, 0, 0.8)); /* Color predeterminado: Naranja degradee con 80% de opacidad */
+      border-radius: 15px 15px 0 0; /* Bordes redondeados */
       cursor: pointer;
-      z-index: 1001;
+      z-index: 1001; /* Encima del widget */
       text-align: center;
-      line-height: 30px;
-      font-size: 24px;
+      line-height: 30px; /* Alinear texto verticalmente */
+      font-size: 24px; /* Tamaño de fuente */
       color: white;
       transition: background-color 0.3s ease;
     }
 
     .radio-trigger:hover {
-      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8));
+      background: linear-gradient(to bottom, rgba(255, 0, 0, 0.8), rgba(255, 165, 0, 0.8)); /* Cambiar color a Rojo degradee con 80% de opacidad al pasar el mouse */
     }
 
+    /* Mostrar el widget al hacer clic en el indicador */
     .radio-container.visible {
-      transform: translateY(0);
+      transform: translateY(0); /* Mover el widget hacia arriba */
     }
 
+    /* Contenedor de configuraciones de la parte superior */
     .top-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 150px;
-      background-color: black;
-      z-index: 1000;
+      height: 150px; /* Altura */
+      background-color: black; /* Fondo oscuro para coincidir con el diseño */
+      z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
       display: flex;
-      justify-content: center;
-      align-items: center;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
+      justify-content: center; /* Centrar horizontalmente el iframe */
+      align-items: center; /* Centrar verticalmente el iframe */
+      transform: translateY(-100%); /* Ocultar el widget por defecto */
+      transition: transform 0.3s ease; /* Animación suave */
     }
 
     .top-container iframe {
-      width: 100%;
-      height: 100px;
+      width: 100%; /* Mantener el ancho completo */
+      height: 100px; /* Altura ajustada para el iframe */
       border: none;
-      pointer-events: auto;
+      pointer-events: auto; /* Habilitar interacciones */
     }
 
+    /* Botón/indicador para activar el widget superior */
     .top-trigger {
       position: fixed;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 40px;
-      height: 28px;
-      background: rgba(0, 0, 255, 0.7);
-      border-radius: 0 0 15px 15px;
+      width: 40px; /* Ancho reducido */
+      height: 28px; /* Altura reducida */
+      background: rgba(0, 0, 255, 0.7); /* Azul sólido con 70% de opacidad */
+      border-radius: 0 0 15px 15px; /* Bordes redondeados en la parte inferior */
       cursor: pointer;
-      z-index: 1001;
+      z-index: 1001; /* Encima del widget */
       text-align: center;
-      line-height: 25px;
-      font-size: 18px;
-      color: white;
-      transition: background-color 0.3s ease;
+      line-height: 25px; /* Alinear texto verticalmente */
+      font-size: 18px; /* Tamaño de fuente reducido */
+      color: white; /* Color del ícono */
+      transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
     }
 
     .top-trigger:hover {
-      background: rgba(0, 0, 255, 0.9);
+      background: rgba(0, 0, 255, 0.9); /* Azul sólido con 90% de opacidad al pasar el mouse */
     }
 
+    /* Mostrar el frame superior al hacer clic en el indicador */
     .top-container.visible {
-      transform: translateY(0);
+      transform: translateY(0); /* Mover el widget hacia abajo */
     }
 
-    .top-container table {
-      width: 100%;
-      height: 100%;
-      border-collapse: collapse;
-      text-align: center;
-      color: white;
-    }
+/* Estilo para la tabla dentro del .top-container */
+.top-container table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse; /* Eliminar bordes entre celdas */
+  text-align: center;
+  color: white; /* Color predeterminado del texto */
+}
 
-    .top-container td {
-      border: none;
-      padding: 5px;
-      vertical-align: middle;
-    }
+.top-container td {
+  border: none; /* Bordes invisibles */
+  padding: 5px;
+  vertical-align: middle;
+}
 
-    .top-container tr:nth-child(odd) {
-      color: white;
-    }
+.top-container tr:nth-child(odd) {
+  color: white; /* Filas 1 y 3: texto blanco */
+}
 
-    .top-container tr:nth-child(even) {
-      color: gray;
-    }
+.top-container tr:nth-child(even) {
+  color: gray; /* Filas 2 y 4: texto gris */
+}
 
-    .top-container input[type="text"] {
-      width: 50%;
-      padding: 2px;
-      border: 1px solid gray;
-      background-color: transparent;
-      color: inherit;
-      text-align: center;
-    }
+.top-container input[type="text"] {
+  width: 50%; /* Ajustar el ancho del cuadro de texto -- Mismo ancho que .video-select */
+  padding: 2px;
+  border: 1px solid gray; /* Borde gris */
+  background-color: transparent; /* Fondo transparente */
+  color: inherit; /* Heredar el color del texto */
+  text-align: center; /* Centrar el texto */
+}
 
-    .video-select {
-      width: 50%;
-      padding: 4px 6px;
-      border: 1px solid #555;
-      border-radius: 4px;
-      background-color: #2c3e50;
-      color: #ecf0f1;
-      text-align: center;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg fill="%23ecf0f1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      background-size: 16px;
-    }
+/* ================================================ */
+/* ESTILOS PERSONALIZADOS PARA LOS MENÚS DESPLEGABLES */
+/* ================================================ */
 
-    .video-select:hover {
-      background-color: #34495e;
-      border-color: #777;
-    }
+/* Estilo para las listas desplegables - FONDO OSCURO Y TEXTO CLARO */
+.video-select {
+  width: 50%; /* Ancho del select */
+  padding: 4px 6px; /* Mayor padding para mejor apariencia */
+  border: 1px solid #555; /* Borde más oscuro */
+  border-radius: 4px; /* Bordes redondeados */
+  background-color: #2c3e50; /* Fondo oscuro azulado */
+  color: #ecf0f1; /* Color de texto claro */
+  text-align: center; /* Centrar el texto */
+  font-size: 14px; /* Tamaño de fuente adecuado */
+  cursor: pointer; /* Cursor de puntero para indicar que es interactivo */
+  transition: all 0.3s ease; /* Transición suave para efectos hover */
+  appearance: none; /* Eliminar estilo por defecto del navegador */
+  -webkit-appearance: none; /* Para navegadores WebKit */
+  -moz-appearance: none; /* Para Firefox */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23ecf0f1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Flecha personalizada */
+  background-repeat: no-repeat; /* Evitar repetición de la imagen de fondo */
+  background-position: right 8px center; /* Posición de la flecha */
+  background-size: 16px; /* Tamaño de la flecha */
+}
 
-    .video-select:focus {
-      outline: none;
-      border-color: #1abc9c;
-      box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.3);
-    }
+/* Estilo al pasar el mouse sobre el menú desplegable */
+.video-select:hover {
+  background-color: #34495e; /* Fondo un poco más claro al pasar el mouse */
+  border-color: #777; /* Borde más claro al pasar el mouse */
+}
 
-    .video-select option {
-      background-color: #2c3e50;
-      color: #ecf0f1;
-      padding: 10px;
-      font-size: 14px;
-    }
+/* Estilo cuando el menú desplegable está enfocado */
+.video-select:focus {
+  outline: none; /* Eliminar el contorno por defecto */
+  border-color: #1abc9c; /* Cambiar color del borde al enfocar */
+  box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.3); /* Sutil sombra al enfocar */
+}
 
-    .video-select option[value=""] {
-      background-color: #e74c3c;
-      color: white;
-      font-weight: bold;
-    }
+/* Estilo para las opciones dentro del select - FONDO OSCURO Y TEXTO CLARO */
+.video-select option {
+  background-color: #2c3e50; /* Mismo fondo oscuro para las opciones */
+  color: #ecf0f1; /* Mismo color de texto claro para las opciones */
+  padding: 10px; /* Espaciado interno para las opciones */
+  font-size: 14px; /* Tamaño de fuente consistente */
+}
 
-    .video-id {
-      width: 90%;
-      padding: 2px;
-      border: 1px solid #555;
-      border-radius: 4px;
-      background-color: #34495e;
-      color: #ecf0f1;
-      text-align: center;
-      font-family: monospace;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
+/* Estilo especial para la opción USUARIO */
+.video-select option[value=""] {
+  background-color: #e74c3c; /* Fondo rojo para la opción USUARIO */
+  color: white; /* Texto blanco */
+  font-weight: bold; /* Texto en negrita */
+}
 
-    .video-id.editable {
-      border: 1px solid #1abc9c;
-      background-color: #2c3e50;
-      color: white;
-    }
-  </style>
+/* Estilo para los campos de ID */
+.video-id {
+  width: 90%; /* Ancho del cuadro de texto */
+  padding: 2px; /* Mayor padding para mejor apariencia - era 8 */
+  border: 1px solid #555; /* Borde más oscuro */
+  border-radius: 4px; /* Bordes redondeados */
+  background-color: #34495e; /* Fondo ligeramente diferente */
+  color: #ecf0f1; /* Color de texto claro */
+  text-align: center; /* Centrar el texto */
+  font-family: monospace; /* Fuente monoespaciada para IDs */
+  font-size: 14px; /* Tamaño de fuente adecuado */
+  transition: all 0.3s ease; /* Transición suave para cambios */
+}
+
+/* Hacer el campo de ID editable cuando se selecciona "USUARIO" */
+.video-id.editable {
+  border: 1px solid #1abc9c; /* Borde verde cuando es editable */
+  background-color: #2c3e50; /* Mismo fondo que los selects */
+  color: white; /* Texto blanco */
+}
+
+/* ================================================ */
+/* FIN DE ESTILOS PERSONALIZADOS */
+/* ================================================ */
+
+</style>
+  
 </head>
 <body>
-  <div class="container"></div>
-  
-  <div class="top-trigger">⚙️</div>
-  <div class="top-container">
-    <table id="video-config-table"></table>
+  <!-- Contenedor de los videos -->
+  <div class="container">
+    <!-- Los videos se generarán dinámicamente con JavaScript -->
   </div>
   
+  <!-- Indicador para activar el widget superior -->
+  <div class="top-trigger">⚙️</div>
+
+<!-- Contenido de la parte superior -->
+<div class="top-container">
+  <table id="video-config-table">
+    <!-- Las filas y celdas se generarán dinámicamente con JavaScript -->
+  </table>
+</div>
+  
+  <!-- Indicador para activar el widget inferior -->
   <div class="radio-trigger">📻</div>
 
-  <!-- Aviso de volumen para la radio -->
-  <div class="radio-volume-warning">
-    ⚠️ AJUSTA EL VOLUMEN EN EL REPRODUCTOR ⚠️
-  </div>
-
+  <!-- Reproductor de la parte inferior -->
   <div class="radio-container">
     <iframe 
-      id="radioIframe"
-      src="https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
+      src=" https://public-player-widget.webradiosite.com/?cover=1&current_track=1&schedules=1&link=1&popup=1&share=1&embed=0&auto_play=0&source=7228&theme=dark&color=0&identifier=amigo&info=https%3A%2F%2Fpublic-player-widget.webradiosite.com%2Fapp%2Fplayer%2Finfo%2F250778%3Fhash%3D652003e86f1c29653d342c5bec793a5b0c68f0a1&locale=es-es" 
       border="0" 
       scrolling="no" 
       frameborder="0" 
@@ -373,42 +356,45 @@
   </div>
 
   <script>
-    // CONFIGURACIÓN PRINCIPAL
+    // ******* CONFIGURACIÓN PRINCIPAL - Solo modificar esta sección *******
+    // Variables globales para los IDs y nombres de los videos
     const videos = [
-      { name: "CELTTV", id: "http://www.celttv.com.ar/index.php/tv-vivo-hd/", type: "iframe" },
-      { name: "C5N", id: "Uo-ziJhrTvI", type: "youtube" },
-      { name: "A24", id: "ArKbAx1K-2U", type: "youtube" },
-      { name: "TN", id: "cb12KmMMDJA", type: "youtube" },
-      { name: "CANAL26", id: "jwEtUHVxbjU", type: "youtube" },
-      { name: "NACION+", id: "hexOV2Z0jvA", type: "youtube" },
-      { name: "CRONICA", id: "avly0uwZzOE", type: "youtube" },
-      { name: "TELEFE", id: "xo8GkZXtNV0", type: "youtube" },
-      { name: "EL11-ENTRE.RIOS", id: "nndzeKDSjuc", type: "youtube" },
-      { name: "QUIERO-MUSICA", id: "8Mw0YdKN2XY", type: "youtube" },
-      { name: "RADIO-MITRE", id: "ybXIVVg6epw", type: "youtube" },
-      { name: "RADIO-LA.RED", id: "9XHmu_TXck0", type: "youtube" },
-      { name: "URBANA.PLAY-FM", id: "eyo4p5HUOsY", type: "youtube" },
-      { name: "CELTTV", id: "http://www.celttv.com.ar/index.php/tv-vivo-hd/", type: "iframe" }
+      { name: "C5N", id: "Uo-ziJhrTvI" },
+      { name: "A24", id: "ArKbAx1K-2U" },
+      { name: "TN", id: "cb12KmMMDJA" },
+      { name: "CANAL26", id: "jwEtUHVxbjU" },
+      { name: "NACION+", id: "hexOV2Z0jvA" },
+      { name: "CRONICA", id: "avly0uwZzOE" },
+      { name: "TELEFE", id: "xo8GkZXtNV0" },
+      { name: "EL11-ENTRE.RIOS", id: "nndzeKDSjuc" },
+      { name: "QUIERO-MUSICA", id: "8Mw0YdKN2XY" },
+      { name: "RADIO-MITRE", id: "ybXIVVg6epw" },
+      { name: "RADIO-LA.RED", id: "9XHmu_TXck0" },
+      { name: "URBANA.PLAY-FM", id: "eyo4p5HUOsY" }
+      // Agregar más videos aquí si es necesario
     ];
+    // *********************************************************************
     
+    // Número de reproductores de video (modificar si se cambia la estructura HTML)
     const NUMBER_OF_PLAYERS = 4;
+    
+    // Variables globales para los reproductores de YouTube
     let players = [];
     let containers = [];
     let volumeSliders = [];
-    let hlsInstances = []; // Para manejar los reproductores HLS
 
-    // NUEVO: Variables para el control de volumen de la radio
-    let radioAudioElement = null;
-    let radioVolumeCheckInterval = null;
-
+    // ********** NUEVA FUNCIÓN: Generar dinámicamente los contenedores de video **********
+    /**
+     * Genera dinámicamente la estructura HTML de los videos basándose en el array 'videos'
+     * Elimina la necesidad de tener valores estáticos en el HTML
+     */
     function initializeVideoContainers() {
       const container = document.querySelector('.container');
-      container.innerHTML = '';
+      container.innerHTML = ''; // Limpiar contenedor existente
       
+      // Generar los contenedores de video dinámicamente
       for (let i = 0; i < NUMBER_OF_PLAYERS; i++) {
-        const video = i < videos.length ? videos[i] : null;
-        const videoId = video ? video.id : '';
-        const videoType = video ? video.type : 'youtube';
+        const videoId = i < videos.length ? videos[i].id : '';
         
         const videoWrapper = document.createElement('div');
         videoWrapper.className = 'video-wrapper';
@@ -416,57 +402,18 @@
         const videoContainer = document.createElement('div');
         videoContainer.className = 'video-container';
         videoContainer.dataset.videoIndex = i;
-        videoContainer.dataset.videoType = videoType;
         if (videoId) {
           videoContainer.dataset.videoId = videoId;
         }
         
-        // Crear el elemento apropiado según el tipo
-        if (videoType === 'hls') {
-          // Para HLS, crear un elemento <video>
-          const videoElement = document.createElement('video');
-          videoElement.id = `video${i+1}`;
-          videoElement.style.position = 'absolute';
-          videoElement.style.top = '50%';
-          videoElement.style.left = '50%';
-          videoElement.style.transform = 'translate(-50%, -50%)';
-          videoElement.style.width = '100%';
-          videoElement.style.height = '100%';
-          videoElement.style.objectFit = 'contain';
-          videoElement.autoplay = true;
-          videoElement.muted = true;
-          videoElement.playsInline = true;
-          videoElement.controls = false;
-          videoElement.setAttribute('playsinline', '');
-          videoElement.setAttribute('webkit-playsinline', '');
-          
-          videoContainer.appendChild(videoElement);
-        } else if (videoType === 'iframe') {
-          // Para páginas web externas (como CELTTV), crear un iframe normal
-          const iframe = document.createElement('iframe');
-          iframe.id = `video${i+1}`;
-          if (videoId) {
-            iframe.src = videoId;
-          }
-          iframe.setAttribute('frameborder', '0');
-          iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-          iframe.setAttribute('allowfullscreen', '');
-          iframe.style.pointerEvents = 'auto'; // Permitir interacción con el iframe
-          
-          videoContainer.appendChild(iframe);
-        } else {
-          // Para YouTube, crear un iframe
-          const iframe = document.createElement('iframe');
-          iframe.id = `video${i+1}`;
-          if (videoId) {
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
-          }
-          iframe.setAttribute('frameborder', '0');
-          iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-          iframe.setAttribute('allowfullscreen', '');
-          
-          videoContainer.appendChild(iframe);
+        const iframe = document.createElement('iframe');
+        iframe.id = `video${i+1}`;
+        if (videoId) {
+          iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
         }
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
         
         const overlay = document.createElement('div');
         overlay.className = 'overlay';
@@ -480,157 +427,113 @@
         slider.dataset.videoIndex = i;
         slider.disabled = true;
         
+        videoContainer.appendChild(iframe);
         videoContainer.appendChild(overlay);
         videoWrapper.appendChild(videoContainer);
         videoWrapper.appendChild(slider);
         container.appendChild(videoWrapper);
       }
       
+      // Actualizar las referencias a los elementos recién creados
       containers = document.querySelectorAll('.video-container');
       volumeSliders = document.querySelectorAll('.volume-slider');
+      
+      // Configurar los event listeners para los nuevos elementos
       setupEventListeners();
     }
     
+    // ********** NUEVA FUNCIÓN: Configurar event listeners para los contenedores **********
+    /**
+     * Configura todos los event listeners para los elementos de video
+     * Se llama después de generar dinámicamente los contenedores
+     */
     function setupEventListeners() {
+      // Agregar eventos de clic a cada capa superpuesta
       containers.forEach((container, index) => {
         const overlay = container.querySelector('.overlay');
         const videoId = container.dataset.videoId;
-        const videoType = container.dataset.videoType;
         const slider = volumeSliders[index];
         
+        // Evento de clic simple
         overlay.addEventListener('click', () => {
-          // Para iframes externos, no manejar audio (tiene sus propios controles)
-          if (videoType === 'iframe') {
-            if (container.classList.contains('active')) {
-              container.classList.remove('active');
-              slider.classList.remove('visible');
-              slider.disabled = true;
-            } else {
-              containers.forEach((cont) => cont.classList.remove('active'));
-              volumeSliders.forEach((s) => {
-                s.classList.remove('visible');
-                s.disabled = true;
-              });
-              container.classList.add('active');
-              // No mostrar slider para iframes externos
-            }
-            return;
-          }
-          
+          const currentPlayer = players[index];
+          // Si el contenedor ya está activo, mutear el video
           if (container.classList.contains('active')) {
-            // Mutear según el tipo
-            if (videoType === 'hls') {
-              const videoElement = container.querySelector('video');
-              if (videoElement) videoElement.muted = true;
-            } else {
-              const currentPlayer = players[index];
-              if (currentPlayer) currentPlayer.mute();
-            }
+            currentPlayer.mute();
             container.classList.remove('active');
             slider.classList.remove('visible');
             slider.disabled = true;
+            console.log('Video mutado:', videoId);
           } else {
-            // Remover activos anteriores
-            containers.forEach((cont) => cont.classList.remove('active'));
+            // Remover la clase 'active' de todos los contenedores
+            containers.forEach((cont) => {
+              cont.classList.remove('active');
+            });
+            // Ocultar y deshabilitar todos los sliders
             volumeSliders.forEach((s) => {
               s.classList.remove('visible');
               s.disabled = true;
             });
-            
-            // Silenciar todos
-            containers.forEach((cont, idx) => {
-              const type = cont.dataset.videoType;
-              if (type === 'hls') {
-                const vid = cont.querySelector('video');
-                if (vid) vid.muted = true;
-              } else if (type === 'youtube') {
-                if (players[idx] && players[idx].mute) players[idx].mute();
-              }
+            // Silenciar todos los videos
+            players.forEach((player) => {
+              if (player && player.mute) player.mute();
             });
-            
-            // Activar el seleccionado
-            if (videoType === 'hls') {
-              const videoElement = container.querySelector('video');
-              if (videoElement) videoElement.muted = false;
-            } else {
-              const currentPlayer = players[index];
-              if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
-            }
-            
+            // Quitar el mute al video seleccionado
+            if (currentPlayer && currentPlayer.unMute) currentPlayer.unMute();
+            // Agregar la clase 'active' al contenedor seleccionado
             container.classList.add('active');
             slider.classList.add('visible');
             slider.disabled = false;
+            console.log('Video activado:', videoId);
           }
         });
         
+        // Evento de doble clic
         overlay.addEventListener('dblclick', () => {
+          const currentPlayer = players[index];
+          // Mutear el video si está activo
           if (container.classList.contains('active')) {
-            if (videoType === 'hls') {
-              const videoElement = container.querySelector('video');
-              if (videoElement) videoElement.muted = true;
-            } else if (videoType === 'youtube') {
-              const currentPlayer = players[index];
-              if (currentPlayer) currentPlayer.mute();
-            }
+            currentPlayer.mute();
             container.classList.remove('active');
             slider.classList.remove('visible');
             slider.disabled = true;
+            console.log('Video mutado por doble clic:', videoId);
           }
-          
-          // Abrir en ventana emergente solo para YouTube
-          if (videoType === 'youtube') {
-            const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
-            const popupWidth = 800;
-            const popupHeight = 600;
-            const left = (window.screen.width - popupWidth) / 2;
-            const top = (window.screen.height - popupHeight) / 2;
-            window.open(videoUrl, 'VideoPopup', `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`);
-          } else if (videoType === 'iframe') {
-            // Para iframes externos, abrir la URL original
-            window.open(videoId, 'VideoPopup', 'width=1024,height=768,resizable=yes');
-          }
+          // Construir la URL del video con parámetros para pantalla completa
+          const videoUrl = `https://www.youtube.com/watch?v=${videoId}&autoplay=1&fs=1`;
+          // Abrir el enlace del video en una ventana emergente
+          const popupWidth = 800;
+          const popupHeight = 600;
+          const left = (window.screen.width - popupWidth) / 2;
+          const top = (window.screen.height - popupHeight) / 2;
+          window.open(
+            videoUrl,
+            'VideoPopup',
+            `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes`
+          );
+          console.log('Enlace abierto en ventana emergente:', videoUrl);
         });
       });
       
+      // Agregar eventos a los controles de volumen
       volumeSliders.forEach((slider) => {
         const videoIndex = slider.dataset.videoIndex;
         slider.addEventListener('input', () => {
           const volume = slider.value / 100;
-          const container = containers[videoIndex];
-          const videoType = container.dataset.videoType;
-          
-          if (videoType === 'hls') {
-            const videoElement = container.querySelector('video');
-            if (videoElement) videoElement.volume = volume;
-          } else {
-            const player = players[videoIndex];
-            if (player && player.setVolume) {
-              player.setVolume(volume * 100);
-            }
+          const player = players[videoIndex];
+          if (player && player.setVolume) {
+            player.setVolume(volume * 100);
+            console.log(`Volumen del video ${videoIndex} ajustado a:`, volume);
           }
         });
       });
     }
-
-    // NUEVO: Mostrar aviso de volumen cuando se abre la radio
-    function showVolumeWarning() {
-      const warning = document.querySelector('.radio-volume-warning');
-      const radioContainer = document.querySelector('.radio-container');
-      const radioTrigger = document.querySelector('.radio-trigger');
-      
-      radioTrigger.addEventListener('click', () => {
-        setTimeout(() => {
-          if (radioContainer.classList.contains('visible')) {
-            warning.classList.add('visible');
-            setTimeout(() => {
-              warning.classList.remove('visible');
-            }, 8000);
-          }
-        }, 300);
-      });
-    }
     
+    // Cargar la API de YouTube
     function onYouTubeIframeAPIReady() {
+      console.log('API de YouTube cargada correctamente.');
+      
+      // Inicializar solo los primeros NUMBER_OF_PLAYERS videos
       players = [];
       for (let i = 1; i <= NUMBER_OF_PLAYERS; i++) {
         if (i <= videos.length) {
@@ -639,6 +542,7 @@
             events: { 'onReady': onPlayerReady }
           }));
         } else {
+          // Si no hay suficientes videos en la configuración, crear un player vacío
           players.push(new YT.Player(`video${i}`, { 
             events: { 'onReady': onPlayerReady }
           }));
@@ -646,13 +550,19 @@
       }
     }
     
+    // Función que se ejecuta cuando los videos están listos
     function onPlayerReady(event) {
       const player = event.target;
+      console.log('Video listo:', player.getIframe().id);
+    
+      // Silenciar todos los videos al iniciar
       player.mute();
       player.playVideo();
     }
 
+    // Función para extraer el ID de un enlace de YouTube
     function extractYouTubeId(url) {
+      // Patrones comunes para URLs de YouTube
       const patterns = [
         /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/,
         /(?:youtube\.com\/embed\/)([^&]+)/,
@@ -665,14 +575,18 @@
           return match[1];
         }
       }
+      
       return null;
     }
     
+    // Generar dinámicamente la tabla de configuración
     function generateVideoConfigTable() {
       const table = document.querySelector(".top-container table");
-      table.innerHTML = '';
+      table.innerHTML = ''; // Limpiar tabla existente
     
+      // Crear las filas y celdas de la tabla
       for (let i = 0; i < 2; i++) {
+        // Primera fila: nombres de los videos
         const nameRow = document.createElement("tr");
         for (let j = 0; j < 2; j++) {
           const cell = document.createElement("td");
@@ -680,6 +594,7 @@
           select.classList.add("video-select");
           select.dataset.videoIndex = i * 2 + j;
     
+          // Agregar las opciones predefinidas desde el array videos
           videos.forEach((video) => {
             const option = document.createElement("option");
             option.value = video.id;
@@ -687,17 +602,20 @@
             select.appendChild(option);
           });
     
+          // Agregar la opción "USUARIO"
           const userOption = document.createElement("option");
           userOption.value = "";
           userOption.textContent = "USUARIO";
           select.appendChild(userOption);
     
+          // Añadir el ícono ⚙️ antes del select
           cell.innerHTML = "⚙️ ";
           cell.appendChild(select);
           nameRow.appendChild(cell);
         }
         table.appendChild(nameRow);
     
+        // Segunda fila: IDs de los videos
         const idRow = document.createElement("tr");
         for (let j = 0; j < 2; j++) {
           const cell = document.createElement("td");
@@ -706,6 +624,7 @@
           input.classList.add("video-id");
           input.readOnly = true;
           
+          // Asignar el ID correspondiente o vacío si no existe
           const videoIndex = i * 2 + j;
           input.value = videoIndex < videos.length ? videos[videoIndex].id : "";
           
@@ -715,10 +634,12 @@
         table.appendChild(idRow);
       }
       
+      // Agregar eventos a los selects
       const videoSelects = document.querySelectorAll(".video-select");
       const videoIds = document.querySelectorAll(".video-id");
     
       videoSelects.forEach((select) => {
+        // Establecer la opción seleccionada por defecto
         const videoIndex = select.dataset.videoIndex;
         if (videoIndex < videos.length) {
           select.value = videos[videoIndex].id;
@@ -730,9 +651,11 @@
           const idInput = videoIds[videoIndex];
     
           if (selectedValue === "") {
+            // Si se selecciona "USUARIO", mostrar cuadro de diálogo
             const youtubeLink = prompt("Por favor, pega el enlace de YouTube:");
             
             if (youtubeLink) {
+              // Extraer el ID del video del enlace
               let videoId = extractYouTubeId(youtubeLink);
               
               if (videoId) {
@@ -740,6 +663,7 @@
                 idInput.classList.remove("editable");
                 idInput.readOnly = true;
                 
+                // Actualizar el reproductor de YouTube correspondiente
                 const player = players[videoIndex];
                 if (player && player.loadVideoById) {
                   player.loadVideoById(videoId);
@@ -747,25 +671,31 @@
                   player.playVideo();
                 }
                 
+                // Actualizar el iframe
                 const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
                 
+                // Actualizar el data-video-id del contenedor para el doble clic
                 const container = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
                 if (container) {
                   container.dataset.videoId = videoId;
                 }
               } else {
                 alert("El enlace de YouTube no es válido. Por favor, ingresa un enlace válido.");
+                // Restablecer la selección
                 event.target.value = idInput.value || "";
               }
             } else {
+              // Si el usuario cancela, restablecer la selección
               event.target.value = idInput.value || "";
             }
           } else {
+            // Si se selecciona otro video, actualizar el ID automáticamente
             idInput.value = selectedValue;
             idInput.classList.remove("editable");
             idInput.readOnly = true;
     
+            // Actualizar el reproductor de YouTube correspondiente
             const player = players[videoIndex];
             if (player && player.loadVideoById) {
               player.loadVideoById(selectedValue);
@@ -773,9 +703,11 @@
               player.playVideo();
             }
     
+            // Actualizar el iframe del video correspondiente
             const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
             iframe.src = `https://www.youtube.com/embed/${selectedValue}?autoplay=1&mute=1&controls=0&loop=1&playlist=${selectedValue}&enablejsapi=1`;
             
+            // Actualizar el data-video-id del contenedor para el doble clic
             const container = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
             if (container) {
               container.dataset.videoId = selectedValue;
@@ -785,167 +717,25 @@
       });
     }
     
-    // NUEVA FUNCIÓN: Actualizar reproductor según tipo
-    function updatePlayer(videoIndex, videoId, videoType) {
-      const container = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
-      if (!container) return;
-      
-      // Actualizar data attributes
-      container.dataset.videoId = videoId;
-      container.dataset.videoType = videoType;
-      
-      // Limpiar el contenido anterior (excepto overlay y slider si existen)
-      const overlay = container.querySelector('.overlay');
-      container.innerHTML = '';
-      if (overlay) container.appendChild(overlay);
-      
-      if (videoType === 'hls') {
-        // Crear elemento de video para HLS
-        const videoElement = document.createElement('video');
-        videoElement.id = `video${parseInt(videoIndex) + 1}`;
-        videoElement.style.position = 'absolute';
-        videoElement.style.top = '50%';
-        videoElement.style.left = '50%';
-        videoElement.style.transform = 'translate(-50%, -50%)';
-        videoElement.style.width = '100%';
-        videoElement.style.height = '100%';
-        videoElement.style.objectFit = 'contain';
-        videoElement.autoplay = true;
-        videoElement.muted = true;
-        videoElement.playsInline = true;
-        videoElement.controls = false;
-        videoElement.setAttribute('playsinline', '');
-        videoElement.setAttribute('webkit-playsinline', '');
-        
-        container.insertBefore(videoElement, overlay);
-        
-        // Inicializar HLS
-        if (Hls.isSupported()) {
-          if (hlsInstances[videoIndex]) {
-            hlsInstances[videoIndex].destroy();
-          }
-          const hls = new Hls({
-            debug: true,
-            enableWorker: true,
-            lowLatencyMode: true,
-          });
-          
-          hls.on(Hls.Events.ERROR, function (event, data) {
-            console.error('Error HLS en video', videoIndex, ':', data);
-            if (data.fatal) {
-              switch (data.type) {
-                case Hls.ErrorTypes.NETWORK_ERROR:
-                  console.error('Error de red, intentando recuperar...');
-                  hls.startLoad();
-                  break;
-                case Hls.ErrorTypes.MEDIA_ERROR:
-                  console.error('Error de medios, intentando recuperar...');
-                  hls.recoverMediaError();
-                  break;
-                default:
-                  console.error('Error fatal no recuperable');
-                  hls.destroy();
-                  break;
-              }
-            }
-          });
-          
-          hls.loadSource(videoId);
-          hls.attachMedia(videoElement);
-          hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            console.log('Stream HLS cargado correctamente');
-            console.log('URL del stream:', videoId);
-            videoElement.play()
-              .then(() => console.log('Reproducción HLS iniciada'))
-              .catch(e => {
-                console.error('Error al reproducir:', e);
-                videoElement.muted = true;
-                videoElement.play().catch(err => console.error('Segundo intento fallido:', err));
-              });
-          });
-          hlsInstances[videoIndex] = hls;
-        } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-          videoElement.src = videoId;
-          videoElement.addEventListener('loadedmetadata', function() {
-            console.log('Stream HLS cargado (Safari nativo)');
-            videoElement.play().catch(e => console.log('Autoplay bloqueado:', e));
-          });
-          videoElement.addEventListener('error', function(e) {
-            console.error('Error cargando stream:', e);
-          });
-        }
-        
-        players[videoIndex] = null;
-      } else if (videoType === 'iframe') {
-        // Crear iframe para páginas externas
-        const iframe = document.createElement('iframe');
-        iframe.id = `video${parseInt(videoIndex) + 1}`;
-        iframe.src = videoId;
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.style.pointerEvents = 'auto';
-        
-        container.insertBefore(iframe, overlay);
-        
-        // No necesita player API
-        if (hlsInstances[videoIndex]) {
-          hlsInstances[videoIndex].destroy();
-          hlsInstances[videoIndex] = null;
-        }
-        players[videoIndex] = null;
-      } else {
-        // Crear iframe para YouTube
-        const iframe = document.createElement('iframe');
-        iframe.id = `video${parseInt(videoIndex) + 1}`;
-        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-        iframe.setAttribute('allowfullscreen', '');
-        
-        container.insertBefore(iframe, overlay);
-        
-        // Destruir HLS si existía
-        if (hlsInstances[videoIndex]) {
-          hlsInstances[videoIndex].destroy();
-          hlsInstances[videoIndex] = null;
-        }
-        
-        // Crear nuevo player de YouTube
-        setTimeout(() => {
-          players[videoIndex] = new YT.Player(iframe.id, {
-            videoId: videoId,
-            events: {
-              'onReady': function(event) {
-                event.target.mute();
-                event.target.playVideo();
-              }
-            }
-          });
-        }, 100);
-      }
-    }
-    
+    // ********** NUEVA FUNCIÓN: Inicializar toda la página **********
+    /**
+     * Función principal que inicializa todos los componentes de la página
+     * Se ejecuta cuando el DOM está completamente cargado
+     */
     function initializePage() {
+      // Generar dinámicamente los contenedores de video
       initializeVideoContainers();
+      
+      // Generar la tabla de configuración
       generateVideoConfigTable();
       
-      // NUEVO: Mostrar aviso de volumen
-      showVolumeWarning();
+      // Cargar la API de YouTube
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
       
-      // Cargar HLS.js
-      const hlsScript = document.createElement('script');
-      hlsScript.src = "https://cdn.jsdelivr.net/npm/hls.js@latest";
-      hlsScript.onload = function() {
-        console.log('HLS.js cargado correctamente.');
-        // Luego cargar la API de YouTube
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-      };
-      document.head.appendChild(hlsScript);
-      
+      // Configurar los event listeners para los widgets (radio y configuración)
       const radioTrigger = document.querySelector('.radio-trigger');
       const radioContainer = document.querySelector('.radio-container');
       const topTrigger = document.querySelector('.top-trigger');
@@ -972,15 +762,15 @@
       });
     }
     
+    // Iniciar la página cuando el DOM esté completamente cargado
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initializePage);
     } else {
       initializePage();
     }
-  </script>
+</script>
 </body>
 </html>
-
 
 
 
