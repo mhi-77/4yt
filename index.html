@@ -383,6 +383,84 @@
     let containers = [];
     let volumeSliders = [];
 
+    // ********** FUNCIONES PARA GUARDAR/CARGAR CONFIGURACIÓN **********
+    /**
+     * Guarda la configuración actual de videos en localStorage
+     */
+    function saveConfiguration() {
+      const config = [];
+      for (let i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        const container = document.querySelector(`.video-container[data-video-index="${i}"]`);
+        if (container && container.dataset.videoId) {
+          config.push({
+            index: i,
+            videoId: container.dataset.videoId
+          });
+        }
+      }
+      localStorage.setItem('videoMonitorConfig', JSON.stringify(config));
+      console.log('Configuración guardada:', config);
+    }
+
+    /**
+     * Carga la configuración guardada desde localStorage
+     * Retorna un array con los videoIds en orden, o null si no hay configuración guardada
+     */
+    function loadConfiguration() {
+      const savedConfig = localStorage.getItem('videoMonitorConfig');
+      if (savedConfig) {
+        try {
+          const config = JSON.parse(savedConfig);
+          console.log('Configuración cargada:', config);
+          return config;
+        } catch (e) {
+          console.error('Error al cargar configuración:', e);
+          return null;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Aplica una configuración guardada a los reproductores
+     */
+    function applyConfiguration(config) {
+      config.forEach(item => {
+        const videoIndex = item.index;
+        const videoId = item.videoId;
+        
+        // Actualizar el reproductor
+        const player = players[videoIndex];
+        if (player && player.loadVideoById) {
+          player.loadVideoById(videoId);
+          player.mute();
+          player.playVideo();
+        }
+        
+        // Actualizar el iframe
+        const iframe = document.getElementById(`video${parseInt(videoIndex) + 1}`);
+        if (iframe) {
+          iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&enablejsapi=1`;
+        }
+        
+        // Actualizar el contenedor
+        const container = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
+        if (container) {
+          container.dataset.videoId = videoId;
+        }
+        
+        // Actualizar el select y el input en la tabla de configuración
+        const select = document.querySelector(`.video-select[data-video-index="${videoIndex}"]`);
+        const input = document.querySelectorAll('.video-id')[videoIndex];
+        if (select) {
+          select.value = videoId;
+        }
+        if (input) {
+          input.value = videoId;
+        }
+      });
+    }
+
     // ********** NUEVA FUNCIÓN: Generar dinámicamente los contenedores de video **********
     /**
      * Genera dinámicamente la estructura HTML de los videos basándose en el array 'videos'
@@ -392,9 +470,21 @@
       const container = document.querySelector('.container');
       container.innerHTML = ''; // Limpiar contenedor existente
       
+      // Intentar cargar configuración guardada
+      const savedConfig = loadConfiguration();
+      
       // Generar los contenedores de video dinámicamente
       for (let i = 0; i < NUMBER_OF_PLAYERS; i++) {
-        const videoId = i < videos.length ? videos[i].id : '';
+        let videoId = '';
+        
+        // Si hay configuración guardada, usarla
+        if (savedConfig) {
+          const savedItem = savedConfig.find(item => item.index === i);
+          videoId = savedItem ? savedItem.videoId : (i < videos.length ? videos[i].id : '');
+        } else {
+          // Si no hay configuración, usar los valores por defecto
+          videoId = i < videos.length ? videos[i].id : '';
+        }
         
         const videoWrapper = document.createElement('div');
         videoWrapper.className = 'video-wrapper';
@@ -586,6 +676,9 @@
     function generateVideoConfigTable() {
       const table = document.querySelector(".top-container table");
       table.innerHTML = ''; // Limpiar tabla existente
+      
+      // Intentar cargar configuración guardada
+      const savedConfig = loadConfiguration();
     
       // Crear las filas y celdas de la tabla
       for (let i = 0; i < 2; i++) {
@@ -595,7 +688,8 @@
           const cell = document.createElement("td");
           const select = document.createElement("select");
           select.classList.add("video-select");
-          select.dataset.videoIndex = i * 2 + j;
+          const videoIndex = i * 2 + j;
+          select.dataset.videoIndex = videoIndex;
     
           // Agregar las opciones predefinidas desde el array videos
           videos.forEach((video) => {
@@ -627,9 +721,16 @@
           input.classList.add("video-id");
           input.readOnly = true;
           
-          // Asignar el ID correspondiente o vacío si no existe
+          // Asignar el ID correspondiente
           const videoIndex = i * 2 + j;
-          input.value = videoIndex < videos.length ? videos[videoIndex].id : "";
+          
+          // Si hay configuración guardada, usarla
+          if (savedConfig) {
+            const savedItem = savedConfig.find(item => item.index === videoIndex);
+            input.value = savedItem ? savedItem.videoId : (videoIndex < videos.length ? videos[videoIndex].id : "");
+          } else {
+            input.value = videoIndex < videos.length ? videos[videoIndex].id : "";
+          }
           
           cell.appendChild(input);
           idRow.appendChild(cell);
@@ -642,10 +743,11 @@
       const videoIds = document.querySelectorAll(".video-id");
     
       videoSelects.forEach((select) => {
-        // Establecer la opción seleccionada por defecto
+        // Establecer la opción seleccionada por defecto (desde configuración o por defecto)
         const videoIndex = select.dataset.videoIndex;
-        if (videoIndex < videos.length) {
-          select.value = videos[videoIndex].id;
+        const currentVideoId = videoIds[videoIndex].value;
+        if (currentVideoId) {
+          select.value = currentVideoId;
         }
         
         select.addEventListener("change", (event) => {
@@ -683,6 +785,9 @@
                 if (container) {
                   container.dataset.videoId = videoId;
                 }
+                
+                // Guardar la nueva configuración
+                saveConfiguration();
               } else {
                 alert("El enlace de YouTube no es válido. Por favor, ingresa un enlace válido.");
                 // Restablecer la selección
@@ -715,6 +820,9 @@
             if (container) {
               container.dataset.videoId = selectedValue;
             }
+            
+            // Guardar la nueva configuración
+            saveConfiguration();
           }
         });
       });
@@ -774,6 +882,5 @@
 </script>
 </body>
 </html>
-
 
 
